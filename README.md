@@ -1,0 +1,1 @@
+# Azure Provisioning for GPDB 
