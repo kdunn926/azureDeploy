@@ -5,7 +5,7 @@
     "clusterName": {
       "value": "vgpdbtest"
     },
-    "masterNodeVMSize": {
+    "masterVmSize": {
       "value": "Standard_A4"
     },
     "centosRelease": {

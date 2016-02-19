@@ -137,11 +137,22 @@
         "description": "IP suffix for first data node"
       }
     },
+    "numberOfMasterNodes": {
+      "type": "int",
+      "defaultValue": 1,
+      "allowedValues": [
+        1,
+        2
+      ],
+      "metadata": {
+        "description": "Number of master nodes (defaults to 1)"
+      }
+    },
     "numberOfSegmentNodes": {
       "type": "int",
       "defaultValue": 3,
       "metadata": {
-        "description": "Number of nodes (defaults to 3)"
+        "description": "Number of segment nodes (defaults to 3)"
       }
     },
     "artifactsBaseUrl": {
@@ -151,7 +162,7 @@
         "description": "Base URL for scripts/manifests"
       }
     },
-    "vmSize": {
+    "masterVmSize": {
       "type": "string",
       "defaultValue": "Standard_DS14",
       "allowedValues": [
@@ -166,7 +177,25 @@
         "Standard_DS14"
       ],
       "metadata": {
-        "description": "The size of the VMs deployed in the cluster (defaults to Standard_DS14)"
+        "description": "The master node instance type (defaults to Standard_DS14)"
+      }
+    },
+    "segmentVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS14",
+      "allowedValues": [
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_A4",
+        "Standard_D1",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_DS14"
+      ],
+      "metadata": {
+        "description": "The segment node instance type (defaults to Standard_DS14)"
       }
     }
   },
@@ -184,14 +213,28 @@
     },
     "clusterSpec": { 
       "clusterName": "[parameters('clusterName')]",
+      "masterNodes": "[parameters('numberOfMasterNodes')]",
       "segmentNodes": "[parameters('numberOfSegmentNodes')]"
     },
-    "vmSpec": {
+    "masterSpec": {
       "imagePublisher": "OpenLogic",
       "imageVersion": "latest",
       "imageSKU": "[parameters('centosRelease')]",
       "imageOffer": "CentOS",
-      "vmSize": "[parameters('vmSize')]",
+      "vmSize": "[parameters('masterVmSize')]",
+      "privateIPAddressPrefix": "[variables('nodeAddressPrefix')]",
+      "adminUserName": "[parameters('adminUserName')]",
+      "adminPassword": "[parameters('adminPassword')]",
+      "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
+      "segmentNodeASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]",
+      "segmentNodeDataDiskGB": "100"
+    },
+    "segmentSpec": {
+      "imagePublisher": "OpenLogic",
+      "imageVersion": "latest",
+      "imageSKU": "[parameters('centosRelease')]",
+      "imageOffer": "CentOS",
+      "vmSize": "[parameters('segmentVmSize')]",
       "privateIPAddressPrefix": "[variables('nodeAddressPrefix')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
@@ -269,10 +312,10 @@
             "value": "[variables('storageAccount')]"
           },
           "vmCount": {
-            "value": "[variables('clusterSpec').masterNodeCount]"
+            "value": "[variables('clusterSpec').masterNodes]"
           },
           "vmSpec": {
-            "value": "[variables('vmSpec')]"
+            "value": "[variables('masterSpec')]"
           },
           "networkSpec": {
             "value": "[variables('networkSpec')]"
@@ -316,7 +359,7 @@
             "value": "[variables('clusterSpec').segmentNodeCount]"
           },
           "vmSpec": {
-            "value": "[variables('vmSpec')]"
+            "value": "[variables('segmentSpec')]"
           },
           "networkSpec": {
             "value": "[variables('networkSpec')]"
