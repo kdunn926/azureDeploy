@@ -3,31 +3,43 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "clusterName": {
-      "value": "GEN-UNIQUE-13"
+      "value": "vgpdbtest"
     },
-    "privateDomainName": {
-      "value": "hpc.local"
-    },
-    "headNodeVMSize": {
+    "masterNodeVMSize": {
       "value": "Standard_A4"
     },
-    "computeNodeImage": {
-      "value": "CentOS_7.0"
+    "centosRelease": {
+      "value": "7.1"
     },
-    "computeNodeNamePrefix": {
-      "value": "IaaSLnxCN-"
-    },
-    "computeNodeNumber": {
-      "value": 2
-    },
-    "computeNodeVMSize": {
-      "value": "Standard_A3"
-    },
-    "adminUsername": {
-      "value": "azureuser"
+    "storageAccountPrefix": {
+      "value": "GEN-UNIQUE-10"
     },
     "adminPassword": {
       "value": "GEN-PASSWORD"
+    },
+    "gpccPassword": {
+      "value": "GEN-PASSWORD"
+    },
+    "numberOfSegmentNodes": {
+      "value": 3
+    },
+    "dnsNamePrefix": {
+      "value": "GEN-UNIQUE-10"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "virtualNetworkName": {
+      "value": "GEN-UNIQUE-10"
+    },
+    "subnetName": {
+      "value": "GEN-UNIQUE-10"
+    },
+    "artifactsBaseUrl": {
+      "value": "https://bitbucket.org/allscriptsanalytics/gpdbazuredeploy/raw/571a5f3036fd2dfb16299c6ae4a76a92edad4804"
     }
   }
 }

@@ -1,0 +1,193 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceAPIVersion":{
+      "type":"string"
+    },
+    "dnsNamePrefix": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "scriptsUri": {
+      "type": "string"
+    },
+    "storageAccount": {
+      "type": "object"
+    },
+    "vmCount": {
+      "type": "int"
+    },
+    "vmSpec": {
+      "type": "secureobject"
+    },
+    "networkSpec": {
+      "type": "object"
+    },
+    "clusterSpec": {
+      "type": "object"
+    }
+  },
+  "variables": {
+    "vmName": "[concat('sdw', copyIndex(), '.', parameters('dnsNamePrefix')])",
+    "nicName": "[concat(variables('vmName'), '-nic')]",
+    "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
+    "publicIPAddressType": "Dynamic",
+    "securityGroupName": "[concat(parameters('dnsNamePrefix'), '-dn-sg')]",
+    "storageAccount": "[parameters('storageAccount').prefix]",
+    "storageContainer": "[parameters('clusterSpec').clusterName]",
+    "dataDisk0VhdName": "[concat('http://',variables('storageAccount'),'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk0.vhd')]",
+    "dataDisk1VhdName": "[concat('http://',variables('storageAccount'),'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk1.vhd')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "segmentNodeStorageLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "accountType": "[variables('storageAccount').type]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('publicIPAddressName')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "segmentNodeIpLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('dnsNamePrefix')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('nicName'), copyIndex())]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'), copyIndex())]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "copy": {
+        "name": "segmentNodeNicLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').dataNodeAddressStart))]",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(variables('publicIPAddressName'), copyIndex()))]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('vmName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSpec').vmSize]"
+        },
+        "osProfile": {
+          "computername": "[variables('vmName')]",
+          "adminUsername": "[parameters('vmSpec').adminUsername]",
+          "adminPassword": "[parameters('vmSpec').adminPassword]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('vmSpec').imagePublisher]",
+            "offer": "[parameters('vmSpec').imageOffer]",
+            "sku": "[parameters('vmSpec').imageSKU]",
+            "version": "[parameters('vmSpec').imageVersion]"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk0",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 0,
+              "vhd": {
+                "Uri": "[variables('dataDisk0VhdName')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 0,
+              "vhd": {
+                "Uri": "[variables('dataDisk1VhdName')]"
+              },
+              "createOption": "Empty"
+            }
+          ],
+          "osDisk": {
+            "name": "osdisk1",
+            "vhd": {
+              "uri": "[concat('http://',variables('storageAccount'),'.blob.core.windows.net/',variables('storageContainer'),'/','osdisk1.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmName'),'/gpdbprep')]",
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+          "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/bitcore-centos-vm/install_bitcore.sh"
+          ],
+          "commandToExecute": "[concat('sh doGpdbPrep.sh ', parameters('vmSpec').adminUsername)]"
+        }
+      }
+    }
+  ]
+}
