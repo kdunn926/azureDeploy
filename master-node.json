@@ -35,12 +35,92 @@
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
-    "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-sg')]",
+    "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-master-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
     "dataDisk0VhdName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk0.vhd')]"
   },
   "resources": [
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('securityGroupName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "SSH",
+            "properties": {
+              "description": "Allows SSH traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "HDFS.dn.Web.UI",
+            "properties": {
+              "description": "Allow HDFS Web UI traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "50075",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "GPCC.Web.UI",
+            "properties": {
+              "description": "Allows GPCC.Web.UI traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "28080",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 108,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "GPDB.Master.Communication",
+            "properties": {
+              "description": "Allows GPDB Master traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5432",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 111,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "NTP",
+            "properties": {
+              "description": "Allows NTP traffic",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "123",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 107,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[concat(variables('storageAccount').prefix, variables('vmName'))]",

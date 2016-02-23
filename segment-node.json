@@ -35,11 +35,50 @@
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
-    "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-sg')]",
+    "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-seg-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
     "diskVhdBaseName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'))]"
   },
+  "resources": [
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('securityGroupName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "SSH",
+            "properties": {
+              "description": "Allows SSH traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "NTP",
+            "properties": {
+              "description": "Allows NTP traffic",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "123",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 107,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
