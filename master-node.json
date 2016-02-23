@@ -28,12 +28,6 @@
     },
     "clusterSpec": {
       "type": "object"
-    },
-    "sizeOfEachDataDiskInGB": {
-      "type": "string",
-      "metadata": {
-        "description": "Size of each data disk in GB"
-      }
     }
   },
   "variables": {
@@ -134,7 +128,7 @@
           "dataDisks": [
             {
               "name": "datadisk1",
-              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "diskSizeGB": "[parameters('vmSpec').masterNodeDataDiskGB]",
               "lun": 0,
               "vhd": {
                 "Uri": "[variables('dataDisk0VhdName')]"

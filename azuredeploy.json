@@ -231,7 +231,7 @@
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
       "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
-      "segmentNodeDataDiskGB": "100"
+      "masterNodeDataDiskGB": "100"
     },
     "segmentSpec": {
       "imagePublisher": "OpenLogic",
