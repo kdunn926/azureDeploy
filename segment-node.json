@@ -79,7 +79,6 @@
         ]
       }
     },
-  "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[concat(variables('storageAccount').prefix, variables('vmName'), copyIndex())]",
