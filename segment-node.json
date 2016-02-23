@@ -211,16 +211,16 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('vmName'),'/gpdbprep')]",
+      "name": "[concat(variables('vmName'),'/gpdbsegmentprep', copyIndex())]",
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex())]"
-      ],
       "copy": {
         "name": "segmentNodePrepLoop",
         "count": "[parameters('clusterSpec').segmentNodes]"
       },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex())]"
+      ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",

@@ -240,11 +240,15 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('vmName'),'/gpdbprep')]",
+      "name": "[concat(variables('vmName'),'/gpdbmasterprep', copyIndex())]",
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
+      "copy": {
+        "name": "masterNodePrepLoop",
+        "count": "[parameters('clusterSpec').masterNodes]"
+      },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
