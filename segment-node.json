@@ -44,7 +44,7 @@
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[concat(variables('storageAccount').prefix, variables('vmName'))]",
+      "name": "[concat(variables('storageAccount').prefix, copyIndex())]",
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
       "copy": {
@@ -111,7 +111,7 @@
       "name": "[variables('vmName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix, variables('vmName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix, copyIndex())]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
       "properties": {
