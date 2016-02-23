@@ -35,7 +35,7 @@
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
-    "securityGroupName": "[concat(parameters('dnsNamePrefix'), '-dn-sg')]",
+    "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
     "dataDisk0VhdName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk0.vhd')]",
