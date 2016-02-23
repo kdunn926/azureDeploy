@@ -180,7 +180,7 @@
             {
               "name": "datadisk1",
               "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
-              "lun": 0,
+              "lun": 1,
               "vhd": {
                 "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(), 'datadisk1.vhd')]"
               },
