@@ -100,7 +100,7 @@
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
         "dnsSettings": {
-          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '.', variables('vmName'), copyIndex())]"
+          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-', variables('vmName'), copyIndex())]"
         }
       }
     },
@@ -110,7 +110,7 @@
       "name": "[concat(variables('nicName'), copyIndex())]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'), copyIndex())]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'), variables('vmName'), copyIndex())]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
       "copy": {
