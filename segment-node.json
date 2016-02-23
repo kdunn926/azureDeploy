@@ -91,7 +91,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat(variables('publicIPAddressName'), copyIndex())]",
+      "name": "[concat(variables('publicIPAddressName'), variables('vmName'), copyIndex())]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "segmentNodeIpLoop",
@@ -100,7 +100,7 @@
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
         "dnsSettings": {
-          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-', variables('vmName'), copyIndex())]"
+          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '.', variables('vmName'), copyIndex())]"
         }
       }
     },
