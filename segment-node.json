@@ -215,8 +215,12 @@
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex())]"
       ],
+      "copy": {
+        "name": "segmentNodePrepLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
