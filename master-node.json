@@ -185,14 +185,14 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(variables('vmName'), copyIndex())]",
       "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix, variables('vmName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
-      ],
       "copy": {
         "name": "masterNodeLoop",
         "count": "[parameters('clusterSpec').masterNodes]"
       },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix, variables('vmName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+      ],
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('vmSpec').vmSize]"
