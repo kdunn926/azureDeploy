@@ -231,7 +231,6 @@
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
       "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
-      "segmentNodeASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]",
       "segmentNodeDataDiskGB": "100"
     },
     "segmentSpec": {
@@ -243,7 +242,6 @@
       "privateIPAddressPrefix": "[variables('nodeAddressPrefix')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
-      "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
       "segmentNodeASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]",
       "segmentNodeDataDiskGB": "250"
     },
@@ -265,7 +263,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('scriptsUri'), '/common.json')]",
+          "uri": "[concat(variables('scriptsUri'), '/common.json?fileviewer=file-view-default')]",
           "contentVersion": "1.0.0.1"
         },
         "parameters": {
@@ -279,10 +277,10 @@
             "value": "[variables('networkSpec')]"
           },
           "masterNodeASName": {
-            "value": "[variables('vmSpec').masterNodeASName]"
+            "value": "[variables('masterSpec').masterNodeASName]"
           },
           "segmentNodeASName": {
-            "value": "[variables('vmSpec').segmentNodeASName]"
+            "value": "[variables('segmentSpec').segmentNodeASName]"
           }
         }
       }
@@ -297,7 +295,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('scriptsUri'), '/master-node.json')]",
+          "uri": "[concat(variables('scriptsUri'), '/master-node.json?fileviewer=file-view-default')]",
           "contentVersion": "1.0.0.1"
         },
         "parameters": {
@@ -341,7 +339,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('scriptsUri'), '/segment-node.json')]",
+          "uri": "[concat(variables('scriptsUri'), '/segment-node.json?fileviewer=file-view-default')]",
           "contentVersion": "1.0.0.1"
         },
         "parameters": {
@@ -361,7 +359,7 @@
             "value": "[variables('storageAccount')]"
           },
           "vmCount": {
-            "value": "[variables('clusterSpec').segmentNodeCount]"
+            "value": "[variables('clusterSpec').segmentNodes]"
           },
           "vmSpec": {
             "value": "[variables('segmentSpec')]"
@@ -403,7 +401,7 @@
             "value": "[variables('scriptsUri')]"
           },
           "vmSpec": {
-            "value": "[variables('vmSpec')]"
+            "value": "[variables('segmentSpec')]"
           },
           "networkSpec": {
             "value": "[variables('networkSpec')]"
