@@ -17,6 +17,7 @@
       },
       "allowedValues": [
         "6.6",
+        "6.7",
         "7.1",
         "northeurope"
       ] 
@@ -174,6 +175,8 @@
         "Standard_D2",
         "Standard_D3",
         "Standard_D4",
+        "Standard_DS12",
+        "Standard_DS13",
         "Standard_DS14"
       ],
       "metadata": {
@@ -192,6 +195,8 @@
         "Standard_D2",
         "Standard_D3",
         "Standard_D4",
+        "Standard_DS12",
+        "Standard_DS13",
         "Standard_DS14"
       ],
       "metadata": {

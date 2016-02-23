@@ -6,13 +6,16 @@
       "value": "vgpdbtest"
     },
     "masterVmSize": {
-      "value": "Standard_A4"
+      "value": "Standard_DS12"
+    },
+    "segmentVmSize": {
+      "value": "Standard_DS13"
     },
     "centosRelease": {
-      "value": "7.1"
+      "value": "6.7"
     },
     "storageAccountPrefix": {
-      "value": "GEN-UNIQUE-10"
+      "value": "gpdb-test"
     },
     "adminPassword": {
       "value": "GEN-PASSWORD"
@@ -30,16 +33,16 @@
       "value": "eastus"
     },
     "storageAccountType": {
-      "value": "Standard_LRS"
+      "value": "Premium_LRS"
     },
     "virtualNetworkName": {
-      "value": "GEN-UNIQUE-10"
+      "value": "gpdb-test"
     },
     "subnetName": {
-      "value": "GEN-UNIQUE-10"
+      "value": "gpdb-test"
     },
     "artifactsBaseUrl": {
-      "value": "https://bitbucket.org/allscriptsanalytics/gpdbazuredeploy/raw/571a5f3036fd2dfb16299c6ae4a76a92edad4804"
+      "value": "https://bitbucket.org/allscriptsanalytics/gpdbazuredeploy/src/HEAD"
     }
   }
 }
