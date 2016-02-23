@@ -43,7 +43,7 @@
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccount').prefix]",
+      "name": "[concat(variables('storageAccount').prefix, variables('vmName'))]",
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
       "copy": {
@@ -106,7 +106,7 @@
       "name": "[variables('vmName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix, variables('vmName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
       "properties": {
@@ -139,7 +139,7 @@
           "osDisk": {
             "name": "osdisk1",
             "vhd": {
-              "uri": "[concat('http://',variables('storageAccount'),'.blob.core.windows.net/',variables('storageContainer'),'/','osdisk1.vhd')]"
+              "uri": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/','osdisk1.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
