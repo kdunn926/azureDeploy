@@ -31,14 +31,14 @@
     }
   },
   "variables": {
-    "vmName": "[concat('mdw.', parameters('dnsNamePrefix')])",
+    "vmName": "mdw", 
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
     "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-master-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
-    "dataDisk0VhdName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk0.vhd')]"
+    "diskVhdBaseName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'))]"
   },
   "resources": [
     {
@@ -207,19 +207,19 @@
           },
           "dataDisks": [
             {
-              "name": "datadisk1",
+              "name": "datadisk0",
               "diskSizeGB": "[parameters('vmSpec').masterNodeDataDiskGB]",
               "lun": 0,
               "vhd": {
-                "Uri": "[variables('dataDisk0VhdName')]"
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(), 'datadisk0.vhd')]"
               },
               "createOption": "Empty"
             }
           ],
           "osDisk": {
-            "name": "osdisk1",
+            "name": "osdisk0",
             "vhd": {
-              "uri": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/','osdisk1.vhd')]"
+              "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(), 'osdisk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
