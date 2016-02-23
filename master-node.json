@@ -156,7 +156,7 @@
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
       "copy": {
-        "name": "dataNodeNicLoop",
+        "name": "masterNodeNicLoop",
         "count": "[parameters('vmCount')]"
       },
       "properties": {
@@ -165,7 +165,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').dataNodeAddressStart))]",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               },
