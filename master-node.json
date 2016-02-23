@@ -42,14 +42,14 @@
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
     "securityGroupName": "[concat(parameters('dnsNamePrefix'), '-dn-sg')]",
-    "storageAccount": "[parameters('storageAccount').prefix]",
+    "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
-    "dataDisk0VhdName": "[concat('http://',variables('storageAccount'),'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk0.vhd')]"
+    "dataDisk0VhdName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk0.vhd')]"
   },
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccount')]",
+      "name": "[variables('storageAccount').prefix]",
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
       "copy": {
