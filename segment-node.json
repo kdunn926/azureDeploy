@@ -81,13 +81,9 @@
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[concat(variables('storageAccount').prefix, variables('vmName'), copyIndex())]",
+      "name": "[variables('storageAccount').prefix]",
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
-      "copy": {
-        "name": "segmentNodeStorageLoop",
-        "count": "[parameters('clusterSpec').segmentNodes]"
-      },
       "properties": {
         "accountType": "[variables('storageAccount').type]"
       }
@@ -152,7 +148,7 @@
         "count": "[parameters('clusterSpec').segmentNodes]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix, variables('vmName'), copyIndex())]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix)]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyIndex())]"
       ],
       "properties": {
