@@ -113,6 +113,10 @@
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix, variables('vmName'), copyIndex())]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyIndex())]"
       ],
+      "copy": {
+        "name": "segmentNodeLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('vmSpec').vmSize]"
