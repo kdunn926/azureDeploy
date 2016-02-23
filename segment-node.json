@@ -38,8 +38,8 @@
     "securityGroupName": "[concat(parameters('dnsNamePrefix'), '-dn-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
-    "dataDisk0VhdName": "[concat('http://',variables('storageAccount'),'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk0.vhd')]",
-    "dataDisk1VhdName": "[concat('http://',variables('storageAccount'),'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk1.vhd')]"
+    "dataDisk0VhdName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk0.vhd')]",
+    "dataDisk1VhdName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'dataDisk1.vhd')]"
   },
   "resources": [
     {
