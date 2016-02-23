@@ -53,6 +53,7 @@
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
       "copy": {
+        "name": "masterNodeStorageLoop",
         "count": "[parameters('vmCount')]"
       },
       "properties": {
