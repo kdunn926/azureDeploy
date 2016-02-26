@@ -33,7 +33,7 @@
   "variables": {
     "vmName": "mdw", 
     "nicName": "[concat(variables('vmName'), '-nic')]",
-    "publicIPAddressName": "[concat(variables('vmName'), 'publicIP-')]",
+    "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
     "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-master-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
@@ -200,7 +200,18 @@
         "osProfile": {
           "computername": "[variables('vmName')]",
           "adminUsername": "[parameters('vmSpec').adminUsername]",
-          "adminPassword": "[parameters('vmSpec').adminPassword]"
+          "adminPassword": "[parameters('vmSpec').adminPassword]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "false",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('vmSpec').sshKeyData]"
+                }
+              ]
+            }
+          }
         },
         "storageProfile": {
           "imageReference": {
