@@ -35,6 +35,7 @@
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
+    "sshKeyPath": "[concat('/home/',parameters('vmSpec').adminUsername,'/.ssh/authorized_keys')]",
     "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-seg-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
@@ -100,7 +101,7 @@
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
         "dnsSettings": {
-          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-', variables('vmName'), copyIndex())]"
+          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-', variables('vmName'), copyIndex() + 1)]"
         }
       }
     },
@@ -141,7 +142,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(variables('vmName'), copyIndex())]",
+      "name": "[concat(variables('vmName'), copyIndex() + 1)]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "segmentNodeLoop",
@@ -158,7 +159,18 @@
         "osProfile": {
           "computername": "[concat(variables('vmName'), copyIndex())]",
           "adminUsername": "[parameters('vmSpec').adminUsername]",
-          "adminPassword": "[parameters('vmSpec').adminPassword]"
+          "adminPassword": "[parameters('vmSpec').adminPassword]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "false",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('vmSpec').sshKeyData]"
+                }
+              ]
+            }
+          }
         },
         "storageProfile": {
           "imageReference": {
@@ -215,7 +227,7 @@
         "count": "[parameters('clusterSpec').segmentNodes]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex())]"
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex() + 1)]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
