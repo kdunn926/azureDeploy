@@ -35,6 +35,12 @@
         "description": "Admin password for the VMs"
       }
     },
+    "sshKeyData": {
+      "type": "string",
+      "metadata": {
+        "description": "SSH rsa public key file as a string."
+      }
+    },
     "gpccUsername": {
       "type": "string",
       "defaultValue": "gpadmin",
@@ -54,6 +60,13 @@
         "description": "Unique namespace for the Storage Account where the VM disks will be placed (alphahumeric characters only)"
       }
     },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Premium_LRS",
+      "metadata": {
+        "description": "The type of the Storage Account to be created (Default to Premium_LRS)"
+      }
+    },
     "dnsNamePrefix": {
       "type": "string",
       "metadata": {
@@ -62,17 +75,17 @@
     },
     "location": {
       "type": "string",
-      "defaultValue": "westeurope",
+      "defaultValue": "eastus2",
       "allowedValues": [
         "westus",
         "eastus",
+        "eastus2",
+        "southcentralus",
+        "centralus",
         "northeurope", 
         "westeurope",
         "eastasia",
         "southeastasia",
-        "southcentralus",
-        "centralus",
-        "eastus2",
         "japaneast",
         "japanwest",
         "australiaeast",
@@ -80,13 +93,6 @@
       ],
       "metadata": {
         "description": "Location where resources will be provisioned (must support premium storage)"
-      }
-    },
-    "storageAccountType": {
-      "type": "string",
-      "defaultValue": "Premium_LRS",
-      "metadata": {
-        "description": "The type of the Storage Account to be created (Default to Premium_LRS)"
       }
     },
     "virtualNetworkName": {
@@ -177,7 +183,8 @@
         "Standard_D4",
         "Standard_DS12",
         "Standard_DS13",
-        "Standard_DS14"
+        "Standard_DS14",
+        "Standard_A8"
       ],
       "metadata": {
         "description": "The master node instance type (defaults to Standard_DS14)"
@@ -230,6 +237,7 @@
       "privateIPAddressPrefix": "[variables('nodeAddressPrefix')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
+      "sshKeyData": "[parameters('sshKeyData')]" ,
       "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
       "masterNodeDataDiskGB": "100"
     },
@@ -242,7 +250,8 @@
       "privateIPAddressPrefix": "[variables('nodeAddressPrefix')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
-      "segmentNodeASName": "[concat(parameters('dnsNamePrefix'), '-dnAS')]",
+      "sshKeyData": "[parameters('sshKeyData')]" ,
+      "segmentNodeASName": "[concat(parameters('dnsNamePrefix'), '-snAS')]",
       "segmentNodeDataDiskGB": "250"
     },
     "networkSpec": {
