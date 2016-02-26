@@ -235,10 +235,7 @@
         "typeHandlerVersion": "1.4",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "fileUris": [
-          "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/bitcore-centos-vm/install_bitcore.sh"
-          ],
-          "commandToExecute": "[concat('sh doGpdbPrep.sh ', parameters('vmSpec').adminUsername)]"
+          "commandToExecute": "[concat('sudo -u ', parameters('vmSpec').adminUsername, ' ssh-keyscan `hostname` >> ~', parameters('vmSpec').adminUsername, '/.ssh/known_hosts')]"
         }
       }
     }
