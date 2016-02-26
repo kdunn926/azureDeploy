@@ -63,6 +63,10 @@
     "storageAccountType": {
       "type": "string",
       "defaultValue": "Premium_LRS",
+      "allowedValues": [
+        "Premium_LRS",
+        "Standard_LRS" 
+      ],
       "metadata": {
         "description": "The type of the Storage Account to be created (Default to Premium_LRS)"
       }
@@ -75,7 +79,7 @@
     },
     "location": {
       "type": "string",
-      "defaultValue": "eastus2",
+      "defaultValue": "eastus",
       "allowedValues": [
         "westus",
         "eastus",
@@ -212,6 +216,14 @@
       "metadata": {
         "description": "The segment node instance type (defaults to Standard_DS14)"
       }
+    },
+    "masterNodeDisk" : {
+      "type": "string",
+      "defaultValue": "100"
+    },
+    "segmentNodeDisk" : {
+      "type": "string",
+      "defaultValue": "150"
     }
   },
   "variables": {
@@ -242,7 +254,7 @@
       "adminPassword": "[parameters('adminPassword')]",
       "sshKeyData": "[parameters('sshKeyData')]" ,
       "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
-      "masterNodeDataDiskGB": "100"
+      "masterNodeDataDiskGB": "[parameters('masterNodeDisk')]"
     },
     "segmentSpec": {
       "imagePublisher": "OpenLogic",
@@ -255,7 +267,7 @@
       "adminPassword": "[parameters('adminPassword')]",
       "sshKeyData": "[parameters('sshKeyData')]" ,
       "segmentNodeASName": "[concat(parameters('dnsNamePrefix'), '-snAS')]",
-      "segmentNodeDataDiskGB": "250"
+      "segmentNodeDataDiskGB": "[parameters('segmentNodeDisk')]"
     },
     "networkSpec": {
       "addressPrefix": "[variables('addressPrefix')]",
