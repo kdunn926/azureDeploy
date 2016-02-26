@@ -235,7 +235,7 @@
         "typeHandlerVersion": "1.4",
         "autoUpgradeMinorVersion": true,
         "settings": {
-            "fileUris": "[concat(parameters('scriptsUri'), '/prep-host.sh?fileviewer=file-view-default')]",
+            "fileUris": "[uri(parameters('scriptsUri'), '/prep-host.sh?fileviewer=file-view-default')]",
             "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').segmentNodeAddressStart),' ', variables('vmName'), copyIndex(1))]"
         }
       }
