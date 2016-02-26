@@ -235,8 +235,7 @@
         "typeHandlerVersion": "1.4",
         "autoUpgradeMinorVersion": true,
         "settings": {
-            "commandToExecute": "[concat('echo -e \"\n', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').segmentNodeAddressStart), ' ', variables('vmName'), copyIndex(1), '\" >> /etc/hosts' )]",
-            "commandToExecute": "[concat('ssh-keyscan ', variables('vmName'), copyIndex(1), ' >> ~', parameters('vmSpec').adminUsername, '/.ssh/known_hosts')]"
+            "commandToExecute": "[concat('echo -e \"\n', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').segmentNodeAddressStart), ' ', variables('vmName'), copyIndex(1), '\" >> /etc/hosts && ssh-keyscan ', variables('vmName'), copyIndex(1), ' >> ~', parameters('vmSpec').adminUsername, '/.ssh/known_hosts')]"
         }
       }
     }
