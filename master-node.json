@@ -28,17 +28,17 @@
     },
     "clusterSpec": {
       "type": "object"
-    }
-  },
-  "variables": {
-    "vmName": "dw", 
+    },
     "role": { 
       "type": "array",
         "defaultValue": [ 
-         "m", 
-         "sm" 
+         "", 
+         "s" 
       ] 
-    },
+    }
+  },
+  "variables": {
+    "vmName": "mdw", 
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
