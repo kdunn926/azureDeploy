@@ -31,12 +31,12 @@
     }
   },
   "variables": {
-    "vmName": "mdw", 
+    "vmName": "dw", 
     "role": { 
       "type": "array",
         "defaultValue": [ 
-         "", 
-         "s" 
+         "m", 
+         "sm" 
       ] 
     },
     "nicName": "[concat(variables('vmName'), '-nic')]",
@@ -67,20 +67,6 @@
               "destinationAddressPrefix": "*",
               "access": "Allow",
               "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "HDFS.dn.Web.UI",
-            "properties": {
-              "description": "Allow HDFS Web UI traffic",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "50075",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 101,
               "direction": "Inbound"
             }
           },
