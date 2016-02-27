@@ -267,7 +267,9 @@
         "type": "CustomScriptForLinux",
         "typeHandlerVersion": "1.4",
         "settings": {
-            "fileUris": "[concat(parameters('scriptsUri'), '/prep-host.sh')]",
+            "fileUris": [
+                "[concat(parameters('scriptsUri'), '/prep-host.sh')]"
+            ],
             "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').masterNodeAddressStart), ' ', variables('vmName'), copyIndex(), ' ', parameters('vmSpec').adminUsername)]"
         }
       }
