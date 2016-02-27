@@ -164,7 +164,7 @@
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               },
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('role')[copyIndex()], concat(variables('publicIPAddressName')))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('role')[copyIndex()], variables('publicIPAddressName')))]"
               }
             }
           }
