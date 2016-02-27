@@ -400,57 +400,6 @@
           }
         }
       }
-    },
-    {
-      "name": "install-gpdb",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "[variables('templateAPIVersion')]",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/segment-node",
-        "Microsoft.Resources/deployments/master-node"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('scriptsUri'), '/install-gpdb.json')]",
-          "contentVersion": "1.0.0.1"
-        },
-        "parameters": {
-          "resourceAPIVersion":{
-            "value":"[variables('resourceAPIVersion')]"
-          },
-          "dnsNamePrefix": {
-            "value": "[parameters('dnsNamePrefix')]"
-          },
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "scriptsUri": {
-            "value": "[variables('scriptsUri')]"
-          },
-          "vmSpec": {
-            "value": "[variables('segmentSpec')]"
-          },
-          "networkSpec": {
-            "value": "[variables('networkSpec')]"
-          },
-          "clusterSpec": {
-            "value": "[variables('clusterSpec')]"
-          },
-          "fqdn": {
-            "value": "[reference('master-node').outputs.fqdn.value]"
-          },
-          "gpccUsername": {
-            "value": "[parameters('gpccUsername')]"
-          },
-          "gpccPassword": {
-            "value": "[parameters('gpccPassword')]"
-          },
-          "installGPCC": {
-            "value": "[variables('installGPCC')]"
-          }
-        }
-      }
     }
   ]
 }

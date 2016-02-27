@@ -32,6 +32,13 @@
   },
   "variables": {
     "vmName": "mdw", 
+    "role": { 
+      "type": "array",
+        "defaultValue": [ 
+         "", 
+         "s" 
+      ] 
+    },
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
@@ -134,7 +141,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat(variables('publicIPAddressName'), copyIndex())]",
+      "name": "[concat(variables('role')[copyIndex()], variables('publicIPAddressName'))]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "masterNodeIpLoop",
@@ -143,21 +150,21 @@
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
         "dnsSettings": {
-          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-', variables('vmName'), copyIndex())]"
+          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-', variables('role')[copyIndex()], variables('vmName'))]"
         }
       }
     },
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('nicName'), copyIndex())]",
+      "name": "[concat(variables('role')[copyIndex()], variables('nicName'))]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "masterNodeNicLoop",
         "count": "[parameters('vmCount')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'), copyIndex())]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('role')[copyIndex()], variables('publicIPAddressName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
       "properties": {
@@ -171,7 +178,7 @@
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               },
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('publicIPAddressName'), copyIndex()))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('role')[copyIndex()], concat(variables('publicIPAddressName')))]"
               }
             }
           }
@@ -184,7 +191,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(variables('vmName'), copyIndex())]",
+      "name": "[concat(variables('role')[copyIndex()], variables('vmName'))]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "masterNodeLoop",
@@ -192,7 +199,7 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix)]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyIndex())]"
+        "[concat('Microsoft.Network/networkInterfaces/', variables('role')[copyIndex()], variables('nicName'))]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -244,7 +251,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'), copyIndex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('role')[copyIndex()], variables('nicName')))]"
             }
           ]
         }
@@ -252,7 +259,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('vmName'), copyIndex(), '/gpdbmasterprep')]",
+      "name": "[concat(variables('role')[copyIndex()], variables('vmName'), '/gpdbmasterprep')]",
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
       "copy": {
@@ -270,7 +277,7 @@
             "fileUris": [
                 "[concat(parameters('scriptsUri'), '/prep-host.sh')]"
             ],
-            "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').masterNodeAddressStart), ' ', variables('vmName'), copyIndex(), ' ', parameters('vmSpec').adminUsername)]"
+            "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').masterNodeAddressStart), ' ', variables('role')[copyIndex()], variables('vmName'), ' ', parameters('vmSpec').adminUsername)]"
         }
       }
     }
