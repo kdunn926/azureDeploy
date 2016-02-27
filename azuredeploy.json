@@ -353,6 +353,9 @@
           },
           "clusterSpec": {
             "value": "[variables('clusterSpec')]"
+          },
+          "role": {
+            "value": "['', 's']"
           }
         }
       }
