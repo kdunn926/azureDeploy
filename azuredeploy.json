@@ -62,7 +62,7 @@
     },
     "storageAccountType": {
       "type": "string",
-      "defaultValue": "Premium_LRS",
+      "defaultValue": "Standard_LRS",
       "allowedValues": [
         "Premium_LRS",
         "Standard_LRS" 
@@ -175,7 +175,7 @@
     },
     "masterVmSize": {
       "type": "string",
-      "defaultValue": "Standard_A10",
+      "defaultValue": "Standard_A11",
       "allowedValues": [
         "Standard_A1",
         "Standard_A2",
@@ -188,6 +188,8 @@
         "Standard_DS12",
         "Standard_DS13",
         "Standard_DS14",
+        "Standard_D14_v2",
+        "Standard_A9",
         "Standard_A10",
         "Standard_A11"
       ],
@@ -197,7 +199,7 @@
     },
     "segmentVmSize": {
       "type": "string",
-      "defaultValue": "Standard_A10",
+      "defaultValue": "Standard_A11",
       "allowedValues": [
         "Standard_A1",
         "Standard_A2",
@@ -210,6 +212,8 @@
         "Standard_DS12",
         "Standard_DS13",
         "Standard_DS14",
+        "Standard_D14_v2",
+        "Standard_A9",
         "Standard_A10",
         "Standard_A11"
       ],
@@ -223,7 +227,7 @@
     },
     "segmentNodeDisk" : {
       "type": "string",
-      "defaultValue": "150"
+      "defaultValue": "400"
     }
   },
   "variables": {
