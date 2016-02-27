@@ -14,8 +14,10 @@ sed -i -e 's/ALL$/NOPASSWD: ALL/' /etc/sudoers.d/waagent
 sed -i -e 's/^Defaults    requiretty/#Defaults    requiretty/' /etc/sudoers
 
 # Allow loopback SSH
-mkdir ~${USER}/.ssh 
-chmod 600 ~${USER}/.ssh
-chown ${USER}:${USER} ~${USER}/.ssh
+mkdir -p ~${USER}/.ssh 
+chown -R ${USER}:${USER} ~${USER}
+chmod 755 /home/${USER}
+
 ssh-keyscan ${HOSTNAME} | tee --append ~${USER}/.ssh/known_hosts
+chmod 600 ~${USER}/.ssh
 
