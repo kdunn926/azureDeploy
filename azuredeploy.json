@@ -355,7 +355,7 @@
             "value": "[variables('clusterSpec')]"
           },
           "role": {
-            "value": "['', 's']"
+            "value": ["", "s"]
           }
         }
       }
