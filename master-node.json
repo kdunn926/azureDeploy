@@ -266,7 +266,6 @@
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
         "typeHandlerVersion": "1.4",
-        "autoUpgradeMinorVersion": true,
         "settings": {
             "fileUris": "[concat(parameters('scriptsUri'), '/prep-host.sh')]",
             "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').masterNodeAddressStart), ' ', variables('vmName'), copyIndex(), ' ', parameters('vmSpec').adminUsername)]"
