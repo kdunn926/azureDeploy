@@ -268,7 +268,7 @@
         "typeHandlerVersion": "1.4",
         "autoUpgradeMinorVersion": true,
         "settings": {
-            "fileUris": "[uri(parameters('scriptsUri'), '/prep-host.sh?fileviewer=file-view-default')]",
+            "fileUris": "https://bitbucket.org/allscriptsanalytics/gpdbazuredeploy/raw/HEAD/prep-host.sh?fileviewer=file-view-default",
             "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').masterNodeAddressStart), ' ', variables('vmName'), copyIndex())]"
         }
       }
