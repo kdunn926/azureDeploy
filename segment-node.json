@@ -35,7 +35,7 @@
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
-    "sshKeyPath": "[concat('/home/',parameters('vmSpec').adminUsername,'/.ssh/authorized_keys')]",
+    "sshKeyPath": "[concat('/root/.ssh/authorized_keys')]",
     "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-seg-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
