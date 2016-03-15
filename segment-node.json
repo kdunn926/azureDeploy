@@ -112,6 +112,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'), copyIndex(1))]",
+        "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
       "copy": {
@@ -150,6 +151,7 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix)]",
+        "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyIndex(1))]"
       ],
       "properties": {
