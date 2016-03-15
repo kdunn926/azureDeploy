@@ -304,7 +304,7 @@
             "value": "[variables('networkSpec')]"
           },
           "nodeASName": {
-            "value": "[variables('nodeASName')"
+            "value": "[variables('nodeASName')]"
           }
         }
       }
