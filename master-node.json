@@ -151,7 +151,6 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', parameters('role')[copyIndex()], variables('publicIPAddressName'))]",
-        "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
       "properties": {
@@ -172,6 +171,9 @@
         ],
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
+        },
+        "availabilitySet": {
+            "id": "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
         }
       }
     },
@@ -190,6 +192,9 @@
         "[concat('Microsoft.Network/networkInterfaces/', parameters('role')[copyIndex()], variables('nicName'))]"
       ],
       "properties": {
+        "availabilitySet": {
+            "id": "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
+        },
         "hardwareProfile": {
           "vmSize": "[parameters('vmSpec').vmSize]"
         },
