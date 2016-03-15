@@ -11,10 +11,7 @@
     "networkSpec": {
       "type": "object"
     },
-    "masterNodeASName": {
-      "type": "string"
-    },
-    "segmentNodeASName": {
+    "nodeASName": {
       "type": "string"
     }
   },
@@ -23,14 +20,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Compute/availabilitySets",
-      "name": "[parameters('masterNodeASName')]",
-      "location": "[parameters('location')]",
-      "properties": {}
-    },
-    {
-      "apiVersion": "[parameters('resourceAPIVersion')]",
-      "type": "Microsoft.Compute/availabilitySets",
-      "name": "[parameters('segmentNodeASName')]",
+      "name": "[parameters('nodeASName')]",
       "location": "[parameters('location')]",
       "properties": {}
     },

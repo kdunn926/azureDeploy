@@ -237,6 +237,7 @@
     "addressPrefix":"[parameters('addressPrefix')]",
     "subnetPrefix":"[parameters('subnetPrefix')]",
     "nodeAddressPrefix":"[parameters('nodeAddressPrefix')]",
+    "nodeASName": "[parameters('dnsNamePrefix')]",
     "scriptsUri": "[parameters('artifactsBaseUrl')]", 
     "storageAccount": {
       "prefix": "[parameters('storageAccountPrefix')]",
@@ -257,7 +258,6 @@
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
       "sshKeyData": "[parameters('sshKeyData')]" ,
-      "masterNodeASName": "[concat(parameters('dnsNamePrefix'), '-mnAS')]",
       "masterNodeDataDiskGB": "[parameters('masterNodeDisk')]"
     },
     "segmentSpec": {
@@ -270,7 +270,6 @@
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
       "sshKeyData": "[parameters('sshKeyData')]" ,
-      "segmentNodeASName": "[concat(parameters('dnsNamePrefix'), '-snAS')]",
       "segmentNodeDataDiskGB": "[parameters('segmentNodeDisk')]"
     },
     "networkSpec": {
@@ -304,11 +303,8 @@
           "networkSpec": {
             "value": "[variables('networkSpec')]"
           },
-          "masterNodeASName": {
-            "value": "[variables('masterSpec').masterNodeASName]"
-          },
-          "segmentNodeASName": {
-            "value": "[variables('segmentSpec').segmentNodeASName]"
+          "nodeASName": {
+            "value": "[variables('nodeASName')"
           }
         }
       }
