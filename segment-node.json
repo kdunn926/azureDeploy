@@ -138,7 +138,7 @@
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
         },
         "availabilitySet": {
-            "id": "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
+            "id": "[resourceId('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
         }
       }
     },
@@ -157,7 +157,7 @@
       ],
       "properties": {
         "availabilitySet": {
-            "id": "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
+            "id": "[resourceId('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
         },
         "hardwareProfile": {
           "vmSize": "[parameters('vmSpec').vmSize]"

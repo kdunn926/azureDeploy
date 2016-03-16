@@ -173,7 +173,7 @@
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
         },
         "availabilitySet": {
-            "id": "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
+            "id": "[resourceId('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
         }
       }
     },
@@ -188,12 +188,11 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix)]",
-        "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]",
         "[concat('Microsoft.Network/networkInterfaces/', parameters('role')[copyIndex()], variables('nicName'))]"
       ],
       "properties": {
         "availabilitySet": {
-            "id": "[concat('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
+            "id": "[resourceId('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
         },
         "hardwareProfile": {
           "vmSize": "[parameters('vmSpec').vmSize]"
