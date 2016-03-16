@@ -38,7 +38,7 @@
     }
   },
   "variables": {
-    "vmName": "mdw", 
+    "vmName": "[concat(parameters('clusterSpec').clusterName, '-mdw')]", 
     "nicName": "[concat(variables('vmName'), '-nic')]",
     "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
