@@ -38,15 +38,13 @@
     }
   },
   "variables": {
-    "vmName": "[concat(parameters('clusterSpec').clusterName, '-mdw')]", 
-    "nicName": "[concat(variables('vmName'), '-nic')]",
-    "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
+    "vmName": "mdw", 
     "publicIPAddressType": "Dynamic",
     "sshKeyPath": "[concat('/root/.ssh/authorized_keys')]",
     "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-master-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
-    "diskVhdBaseName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'))]"
+    "diskVhdBaseName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/', parameters('clusterSpec').clusterName, '-')]"
   },
   "resources": [
     {
@@ -127,7 +125,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat(parameters('role')[copyIndex()], variables('publicIPAddressName'))]",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-publicIP')]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "masterNodeIpLoop",
@@ -136,21 +134,21 @@
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
         "dnsSettings": {
-          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-', parameters('role')[copyIndex()], variables('vmName'))]"
+          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'))]"
         }
       }
     },
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(parameters('role')[copyIndex()], variables('nicName'))]",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic')]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "masterNodeNicLoop",
         "count": "[parameters('vmCount')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', parameters('role')[copyIndex()], variables('publicIPAddressName'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-publicIP')]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
       "properties": {
@@ -164,7 +162,7 @@
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               },
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('role')[copyIndex()], variables('publicIPAddressName')))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-publicIP'))]"
               }
             }
           }
@@ -180,7 +178,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('role')[copyIndex()], variables('vmName'))]",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'))]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "masterNodeLoop",
@@ -188,7 +186,7 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix)]",
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('role')[copyIndex()], variables('nicName'))]"
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic')]"
       ],
       "properties": {
         "availabilitySet": {
@@ -198,7 +196,7 @@
           "vmSize": "[parameters('vmSpec').vmSize]"
         },
         "osProfile": {
-          "computername": "[variables('vmName')]",
+          "computername": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'))]",
           "adminUsername": "[parameters('vmSpec').adminUsername]",
           "adminPassword": "[parameters('vmSpec').adminPassword]",
           "linuxConfiguration": {
@@ -225,7 +223,7 @@
               "diskSizeGB": "[parameters('vmSpec').masterNodeDataDiskGB]",
               "lun": 0,
               "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(), 'datadisk0.vhd')]"
+                "Uri": "[concat(variables('diskVhdBaseName'), parameters('role')[copyIndex()], variables('vmName'), 'datadisk0.vhd')]"
               },
               "createOption": "Empty"
             }
@@ -233,7 +231,7 @@
           "osDisk": {
             "name": "osdisk0",
             "vhd": {
-              "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(), 'osdisk.vhd')]"
+              "Uri": "[concat(variables('diskVhdBaseName'), parameters('role')[copyIndex()], variables('vmName'), 'osdisk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -242,7 +240,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('role')[copyIndex()], variables('nicName')))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic'))]"
             }
           ]
         }
@@ -258,7 +256,7 @@
         "count": "[parameters('clusterSpec').masterNodes]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('role')[copyIndex()], variables('vmName'))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",

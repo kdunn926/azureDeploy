@@ -32,8 +32,6 @@
   },
   "variables": {
     "vmName": "[concat(parameters('clusterSpec').clusterName, '-sdw')]",
-    "nicName": "[concat(variables('vmName'), '-nic')]",
-    "publicIPAddressName": "[concat(variables('vmName'), '-publicIP')]",
     "publicIPAddressType": "Dynamic",
     "sshKeyPath": "[concat('/root/.ssh/authorized_keys')]",
     "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-seg-sg')]",
@@ -92,7 +90,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat(variables('publicIPAddressName'), copyIndex(1))]",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-publicIP')]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "segmentNodeIpLoop",
@@ -108,10 +106,10 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('nicName'), copyIndex(1))]",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-nic')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'), copyIndex(1))]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('vmName'), copyIndex(1), '-publicIP')]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
       ],
       "copy": {
@@ -129,7 +127,7 @@
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               },
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('publicIPAddressName'), copyIndex(1)))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('vmName'), copyIndex(1), '-publicIP'))]"
               }
             }
           }
@@ -153,7 +151,7 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix)]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyIndex(1))]"
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic')]"
       ],
       "properties": {
         "availabilitySet": {
@@ -216,7 +214,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicName'), copyIndex(1)))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic'))]"
             }
           ]
         }
