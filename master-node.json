@@ -40,7 +40,7 @@
   "variables": {
     "vmName": "mdw", 
     "publicIPAddressType": "Dynamic",
-    "sshKeyPath": "[concat('/root/.ssh/authorized_keys')]",
+    "sshKeyPath": "/root/.ssh/authorized_keys",
     "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-master-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
