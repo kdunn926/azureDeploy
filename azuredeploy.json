@@ -227,7 +227,7 @@
     },
     "segmentNodeDisk" : {
       "type": "string",
-      "defaultValue": "400"
+      "defaultValue": "20"
     }
   },
   "variables": {
@@ -254,11 +254,11 @@
       "imageSKU": "[parameters('centosRelease')]",
       "imageOffer": "CentOS",
       "vmSize": "[parameters('masterVmSize')]",
-      "privateIPAddressPrefix": "[variables('nodeAddressPrefix')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
       "sshKeyData": "[parameters('sshKeyData')]" ,
-      "masterNodeDataDiskGB": "[parameters('masterNodeDisk')]"
+      "masterNodeDataDiskGB": "[parameters('masterNodeDisk')]",
+      "nodeASName": "[variables('nodeASName')]"
     },
     "segmentSpec": {
       "imagePublisher": "OpenLogic",
@@ -266,11 +266,11 @@
       "imageSKU": "[parameters('centosRelease')]",
       "imageOffer": "CentOS",
       "vmSize": "[parameters('segmentVmSize')]",
-      "privateIPAddressPrefix": "[variables('nodeAddressPrefix')]",
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
       "sshKeyData": "[parameters('sshKeyData')]" ,
-      "segmentNodeDataDiskGB": "[parameters('segmentNodeDisk')]"
+      "segmentNodeDataDiskGB": "[parameters('segmentNodeDisk')]",
+      "nodeASName": "[variables('nodeASName')]"
     },
     "networkSpec": {
       "addressPrefix": "[variables('addressPrefix')]",
