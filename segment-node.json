@@ -32,6 +32,7 @@
   },
   "variables": {
     "vmName": "[concat(parameters('clusterSpec').clusterName, '-sdw')]",
+    "sshKeyPath": "[concat('/home/',parameters('vmSpec').adminUsername,'/.ssh/authorized_keys')]",
     "publicIPAddressType": "Dynamic",
     "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-seg-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
@@ -168,6 +169,7 @@
             "ssh": {
               "publicKeys": [
                 {
+                  "path": "[variables('sshKeyPath')]",
                   "keyData": "[parameters('vmSpec').sshKeyData]"
                 }
               ]

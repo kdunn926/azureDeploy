@@ -39,8 +39,8 @@
   },
   "variables": {
     "vmName": "mdw", 
+    "sshKeyPath": "[concat('/home/',parameters('vmSpec').adminUsername,'/.ssh/authorized_keys')]",
     "publicIPAddressType": "Dynamic",
-    "sshKeyPath": "/root/.ssh/authorized_keys",
     "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-master-sg')]",
     "storageAccount": "[parameters('storageAccount')]",
     "storageContainer": "[parameters('clusterSpec').clusterName]",
@@ -204,6 +204,7 @@
             "ssh": {
               "publicKeys": [
                 {
+                  "path": "[variables('sshKeyPath')]",
                   "keyData": "[parameters('vmSpec').sshKeyData]"
                 }
               ]
