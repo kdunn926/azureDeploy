@@ -317,15 +317,6 @@
                 "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk14.vhd')]"
               },
               "createOption": "Empty"
-            },
-            {
-              "name": "datadisk15",
-              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
-              "lun": 0,
-              "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk15.vhd')]"
-              },
-              "createOption": "Empty"
             }
           ],
           "osDisk": {
