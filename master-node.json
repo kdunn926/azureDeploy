@@ -206,7 +206,6 @@
             "ssh": {
               "publicKeys": [
                 {
-                  "path": "[variables('sshKeyPath')]",
                   "keyData": "[parameters('vmSpec').sshKeyData]"
                 }
               ]
