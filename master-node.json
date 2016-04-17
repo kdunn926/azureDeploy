@@ -224,7 +224,7 @@
               "diskSizeGB": "[parameters('vmSpec').masterNodeDataDiskGB]",
               "lun": 0,
               "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), parameters('role')[copyIndex()], variables('vmName'), 'datadisk0.vhd')]"
+                "Uri": "[concat(variables('diskVhdBaseName'), parameters('role')[copyIndex()], variables('vmName'), '-datadisk0.vhd')]"
               },
               "createOption": "Empty"
             }
@@ -232,7 +232,7 @@
           "osDisk": {
             "name": "osdisk0",
             "vhd": {
-              "Uri": "[concat(variables('diskVhdBaseName'), parameters('role')[copyIndex()], variables('vmName'), 'osdisk.vhd')]"
+              "Uri": "[concat(variables('diskVhdBaseName'), parameters('role')[copyIndex()], variables('vmName'), '-osdisk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
