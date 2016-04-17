@@ -84,6 +84,7 @@
         "westus",
         "eastus",
         "eastus2",
+        "northcentralus",
         "southcentralus",
         "centralus",
         "northeurope", 
@@ -189,6 +190,7 @@
         "Standard_DS13",
         "Standard_DS14",
         "Standard_D14_v2",
+        "Standard_A8",
         "Standard_A9",
         "Standard_A10",
         "Standard_A11"
