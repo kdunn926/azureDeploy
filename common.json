@@ -19,13 +19,6 @@
   "resources": [
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
-      "type": "Microsoft.Compute/availabilitySets",
-      "name": "[parameters('nodeASName')]",
-      "location": "[parameters('location')]",
-      "properties": {}
-    },
-    {
-      "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[concat(parameters('networkSpec').virtualNetworkName, '-sg')]",
       "location": "[parameters('location')]",

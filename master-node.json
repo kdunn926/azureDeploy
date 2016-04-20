@@ -169,9 +169,6 @@
         ],
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
-        },
-        "availabilitySet": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
         }
       }
     },
@@ -189,9 +186,6 @@
         "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic')]"
       ],
       "properties": {
-        "availabilitySet": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets/', parameters('vmSpec').nodeASName)]"
-        },
         "hardwareProfile": {
           "vmSize": "[parameters('vmSpec').vmSize]"
         },
