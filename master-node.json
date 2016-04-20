@@ -243,7 +243,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('role')[copyIndex()], variables('vmName'), '/gpdbmasterprep')]",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '/gpdbmasterprep')]",
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "location": "[parameters('location')]",
       "copy": {
