@@ -285,33 +285,6 @@
                 "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk11.vhd')]"
               },
               "createOption": "Empty"
-            },
-            {
-              "name": "datadisk12",
-              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
-              "lun": 12,
-              "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk12.vhd')]"
-              },
-              "createOption": "Empty"
-            },
-            {
-              "name": "datadisk13",
-              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
-              "lun": 13,
-              "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk13.vhd')]"
-              },
-              "createOption": "Empty"
-            },
-            {
-              "name": "datadisk14",
-              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
-              "lun": 14,
-              "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk14.vhd')]"
-              },
-              "createOption": "Empty"
             }
           ],
           "osDisk": {
