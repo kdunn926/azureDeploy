@@ -41,6 +41,18 @@
         "description": "SSH rsa public key file as a string."
       }
     },
+    "sshPrivKeyData": {
+      "type": "string",
+      "metadata": {
+        "description": "SSH rsa private key file as a string."
+      }
+    },
+    "apiToken": {
+      "type": "string",
+      "metadata": {
+        "description": "API token for staging binary tarball."
+      }
+    },
     "gpccUsername": {
       "type": "string",
       "defaultValue": "gpadmin",
@@ -260,6 +272,8 @@
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
       "sshKeyData": "[parameters('sshKeyData')]" ,
+      "sshPrivKeyData": "[parameters('sshPrivKeyData')]" ,
+      "apiToken" : "[parameters('apiToken')]" ,
       "masterNodeDataDiskGB": "[parameters('masterNodeDisk')]",
       "nodeASName": "[variables('nodeASName')]"
     },
@@ -272,6 +286,7 @@
       "adminUserName": "[parameters('adminUserName')]",
       "adminPassword": "[parameters('adminPassword')]",
       "sshKeyData": "[parameters('sshKeyData')]" ,
+      "apiToken" : "[parameters('apiToken')]" ,
       "segmentNodeDataDiskGB": "[parameters('segmentNodeDisk')]",
       "nodeASName": "[variables('nodeASName')]"
     },
