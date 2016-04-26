@@ -21,14 +21,18 @@ sed -i -e 's/^Defaults    requiretty/#Defaults    requiretty/' /etc/sudoers
 ssh-keyscan ${HOSTNAME} | tee --append /etc/ssh/ssh_known_hosts
 
 # Generate ssh folder/key with right permissions, then overwrite
-mkdir /root/.ssh
-chmod 700 /root/.ssh
+ssh-keygen -P "" -f /root/.ssh/id_rsa
 echo -e "${SSHPRIVKEY}" > /root/.ssh/id_rsa
+rm -f /root/.ssh/id_rsa.pub
 
 # Generate ssh folder/key with right permissions, then overwrite
 su gpadmin -c 'ssh-keygen -P "" -f /home/gpadmin/.ssh/id_rsa'
 echo -e "${SSHPRIVKEY}" > /home/gpadmin/.ssh/id_rsa
 rm -f /home/gpadmin/.ssh/id_rsa.pub
+
+# Make sure root has passwordless SSH as well
+cp /home/gpadmin/.ssh/authorized_keys /root/.ssh/
+chown root:root /root/.ssh/authorized_keys
 
 # Disable selinux
 sed -ie "s|SELINUX=enforcing|SELINUX=disabled|" /etc/selinux/config
@@ -61,14 +65,18 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     curl -o /home/gpadmin/greenplum-db-appliance-4.3.8.1-build-1-RHEL5-x86_64.bin  -d "" -H "Authorization: Token ${APITOKEN}" -L https://network.pivotal.io/api/v2/products/pivotal-gpdb/releases/1683/product_files/4369/download
 
     chown gpadmin:gpadmin /home/gpadmin/greenplum-db-appliance-*
+    chmod u+x /home/gpadmin/greenplum-db-appliance-*
 
-    # Create a cluster deply hostfile
+    # Create a cluster deploy hostfile
     python -c "print 'mdw' ; print '\n'.join(['sdw{0}'.format(n+1) for n in range(${SEGMENTS})])" > /home/gpadmin/hostfile
 
     chown gpadmin:gpadmin /home/gpadmin/hostfile
 
     # Update system host file with segment hosts
     python -c "print '\n'.join(['${IP_PREFIX}{0} {1}'.format(ip, 'sdw{0}'.format(n+1)) for n, ip in enumerate(range(${SEGMENT_IP_BASE}, ${SEGMENT_IP_BASE} + ${SEGMENTS}))])" >> /etc/hosts
+
+    # Wait for all segment hosts before keyscan
+    sleep 60
     
     # Add cluster hosts to system-wide known_hosts
     for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do ssh-keyscan ${h} | tee --append /etc/ssh/ssh_known_hosts ; done ;
@@ -82,11 +90,10 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     # Add an entry to /etc/fstab
     echo -e "/dev/sdc1  /data  xfs rw,noatime,inode64,allocsize=16m  0 0" >> /etc/fstab
 
+    # Create and mount master's data dir
     mkdir /data
-    
     mount /data
 else
-    export SEGMENT=1
     # Run the prep-segment.sh
 
     READAHEAD="/sbin/blockdev --setra 16384 /dev/sd[c-z]"
@@ -98,85 +105,108 @@ else
       DRIVE_PATTERN='/dev/sd[c-z]'
     fi
 
-    #main() {
-    #  echo Storage
-
-    #  set_readahead
-
-    #  calculate_volumes
-
-    #  create_volumes
-    #}
-
-    #set_readahead() {
-    #$READAHEAD
     echo "$READAHEAD" >> /etc/rc.local
-    #}
 
-    #calculate_volumes() {
-      export GLOBIGNORE="/dev/xvdf"
-      DRIVES=($(ls $DRIVE_PATTERN))
-      DRIVE_COUNT=${#DRIVES[@]}
+    export GLOBIGNORE="/dev/xvdf"
+    DRIVES=($(ls $DRIVE_PATTERN))
+    DRIVE_COUNT=${#DRIVES[@]}
 
-      if [[ -z "${VOLUMES}" ]]; then
-        if [[ $DRIVE_COUNT -lt 8 ]]; then
-          VOLUMES=1
-        elif [[ $DRIVE_COUNT -lt 12 ]]; then
-          VOLUMES=2
-        else
-          VOLUMES=4
-        fi
-      fi
-
-      if (( ${DRIVE_COUNT} % ${VOLUMES} != 0 )); then
-        echo "Drive count (${DRIVE_COUNT}) not divisible by number of volumes (${VOLUMES}), using VOLUMES=1"
+    if [[ -z "${VOLUMES}" ]]; then
+      if [[ $DRIVE_COUNT -lt 8 ]]; then
         VOLUMES=1
+      elif [[ $DRIVE_COUNT -lt 12 ]]; then
+        VOLUMES=2
+      else
+        VOLUMES=4
       fi
-    #}
+    fi
 
-    #create_volumes() {
-      FSTAB=()
+    if (( ${DRIVE_COUNT} % ${VOLUMES} != 0 )); then
+      echo "Drive count (${DRIVE_COUNT}) not divisible by number of volumes (${VOLUMES}), using VOLUMES=1"
+      VOLUMES=1
+    fi
 
-      umount /dev/md[0-9]* || true
+    FSTAB=()
 
-      umount ${DRIVES[*]} || true
+    umount /dev/md[0-9]* || true
 
-      mdadm --stop /dev/md[0-9]* || true
+    umount ${DRIVES[*]} || true
 
-      mdadm --zero-superblock ${DRIVES[*]}
+    mdadm --stop /dev/md[0-9]* || true
 
-      for VOLUME in $(seq $VOLUMES); do
-        DPV=$(expr "$DRIVE_COUNT" "/" "$VOLUMES")
-        DRIVE_SET=($(ls ${DRIVE_PATTERN} | head -n $(expr "$DPV" "*" "$VOLUME") | tail -n "$DPV"))
+    mdadm --zero-superblock ${DRIVES[*]}
 
-        mdadm --create /dev/md${VOLUME} --run --level 0 --chunk 256K --raid-devices=${#DRIVE_SET[@]} ${DRIVE_SET[*]}
+    for VOLUME in $(seq $VOLUMES); do
+      DPV=$(expr "$DRIVE_COUNT" "/" "$VOLUMES")
+      DRIVE_SET=($(ls ${DRIVE_PATTERN} | head -n $(expr "$DPV" "*" "$VOLUME") | tail -n "$DPV"))
 
-        mkfs.xfs -K -f /dev/md${VOLUME}
+      mdadm --create /dev/md${VOLUME} --run --level 0 --chunk 256K --raid-devices=${#DRIVE_SET[@]} ${DRIVE_SET[*]}
 
-        mkdir -p /data${VOLUME}
+      mkfs.xfs -K -f /dev/md${VOLUME}
 
-        FSTAB+="/dev/md${VOLUME}  /data${VOLUME}  xfs rw,noatime,inode64,allocsize=16m  0 0\n"
-      done
+      mkdir -p /data${VOLUME}
 
-      mdadm --detail --scan > /etc/mdadm.conf
+      FSTAB+="/dev/md${VOLUME}  /data${VOLUME}  xfs rw,noatime,inode64,allocsize=16m  0 0\n"
+    done
 
-      for DRIVE in ${DRIVES[*]}; do
-        sed -i -r "s|^${DRIVE}.+$||" /etc/fstab
-      done
+    mdadm --detail --scan > /etc/mdadm.conf
 
-      sed -i -e "/$FSTAB_HEAD/,/$FSTAB_TAIL/d" /etc/fstab
-      echo "$FSTAB_HEAD" >> /etc/fstab
-      echo -e "${FSTAB[@]}" >> /etc/fstab
-      echo "$FSTAB_TAIL" >> /etc/fstab
+    for DRIVE in ${DRIVES[*]}; do
+      sed -i -r "s|^${DRIVE}.+$||" /etc/fstab
+    done
 
-      mount -a
-    #}
+    sed -i -e "/$FSTAB_HEAD/,/$FSTAB_TAIL/d" /etc/fstab
+    echo "$FSTAB_HEAD" >> /etc/fstab
+    echo -e "${FSTAB[@]}" >> /etc/fstab
+    echo "$FSTAB_TAIL" >> /etc/fstab
 
-    #main "$@"
+    mount -a
 
 fi
 
-# Fix ownership
+# Fix datadir ownership
 chown -f gpadmin:gpadmin /data* 
+
+# Set kernel parameters
+
+SYSCTL_HEAD="# BEGIN GENERATED CONTENT"
+SYSCTL_TAIL="# END GENERATED CONTENT"
+SYSCTL="$SYSCTL_HEAD
+kernel.shmmax = 500000000
+kernel.shmmni = 4096
+kernel.shmall = 4000000000
+kernel.sem = 250 512000 100 2048
+kernel.sysrq = 1
+kernel.core_uses_pid = 1
+kernel.msgmnb = 65536
+kernel.msgmax = 65536
+kernel.msgmni = 2048
+net.ipv4.tcp_syncookies = 1
+net.ipv4.ip_forward = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_max_syn_backlog = 4096
+net.ipv4.conf.all.arp_filter = 1
+net.ipv4.ip_local_port_range = 1025 65535
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.core.netdev_max_backlog = 10000
+net.core.rmem_max = 2097152
+net.core.wmem_max = 2097152
+vm.overcommit_memory = 2
+vm.overcommit_ratio = 100
+$SYSCTL_TAIL"
+
+KERNEL="elevator=deadline transparent_hugepage=never"
+
+sed -i -e "/$SYSCTL_HEAD/,/$SYSCTL_TAIL/d" /etc/sysctl.conf
+echo "$SYSCTL" >> /etc/sysctl.conf
+echo "$SYSCTL" | /sbin/sysctl -p -
+
+sed -i -r "s/kernel(.+)/kernel\1 $KERNEL/" /boot/grub/grub.conf
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+for BLOCKDEV in /sys/block/*/queue/scheduler; do
+  echo deadline > "$BLOCKDEV"
+done
 
 echo "Done"
