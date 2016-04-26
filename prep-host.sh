@@ -54,9 +54,9 @@ yum install xfsprogs -y
 
 if [ "${HOSTNAME}" -eq "mdw" ] ; then
     # Stage the GPDB appliance tarball
-    curl -o /home/gpadmin/greenplum-db-appliance-4.3.8.0-build-1-RHEL5-x86_64.bin  -d "" -H "Authorization: Token ${APITOKEN}" -L https://network.pivotal.io/api/v2/products/pivotal-gpdb/releases/1624/product_files/4177/download
+    curl -o /home/gpadmin/greenplum-db-appliance-4.3.8.1-build-1-RHEL5-x86_64.bin  -d "" -H "Authorization: Token ${APITOKEN}" -L https://network.pivotal.io/api/v2/products/pivotal-gpdb/releases/1683/product_files/4369/download
 
-    chown gpadmin:gpadmin /home/gpadmin/greenplum-db-appliance-4.3.8.0-build-1-RHEL5-x86_64.bin
+    chown gpadmin:gpadmin /home/gpadmin//home/gpadmin/greenplum-db-appliance-*
 
     # Create a cluster hostfile
     python -c "print 'mdw' ; print '\n'.join(['sdw{0}'.format(n+1) for n in range(${SEGMENTS})])" > /home/gpadmin/hostfile
