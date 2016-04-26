@@ -21,12 +21,14 @@ sed -i -e 's/^Defaults    requiretty/#Defaults    requiretty/' /etc/sudoers
 ssh-keyscan ${HOSTNAME} | tee --append /etc/ssh/ssh_known_hosts
 
 # Generate ssh folder/key with right permissions, then overwrite
-ssh-keygen -P "" -f /root/.ssh/id_rsa
+mkdir /root/.ssh
+chmod 700 /root/.ssh
 echo -e "${SSHPRIVKEY}" > /root/.ssh/id_rsa
 
 # Generate ssh folder/key with right permissions, then overwrite
 su gpadmin -c 'ssh-keygen -P "" -f /home/gpadmin/.ssh/id_rsa'
 echo -e "${SSHPRIVKEY}" > /home/gpadmin/.ssh/id_rsa
+rm -f /home/gpadmin/.ssh/id_rsa.pub
 
 # Disable selinux
 sed -ie "s|SELINUX=enforcing|SELINUX=disabled|" /etc/selinux/config
@@ -79,6 +81,10 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
 
     # Add an entry to /etc/fstab
     echo -e "/dev/sdc1  /data  xfs rw,noatime,inode64,allocsize=16m  0 0" >> /etc/fstab
+
+    mkdir /data
+    
+    mount /data
 else
     export SEGMENT=1
     # Run the prep-segment.sh
@@ -172,3 +178,5 @@ fi
 
 # Fix ownership
 chown -f gpadmin:gpadmin /data* 
+
+echo "Done"
