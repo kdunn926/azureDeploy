@@ -1,48 +1,69 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
+  "contentVersion": "1.0.0.1",
   "parameters": {
     "clusterName": {
-      "value": "vgpdbtest"
+      "value": "vgpdbprod"
     },
     "masterVmSize": {
-      "value": "Standard_DS12"
+      "value": "Standard_D14_v2"
     },
     "segmentVmSize": {
-      "value": "Standard_DS13"
+      "value": "Standard_D13_v2"
     },
     "centosRelease": {
       "value": "6.7"
     },
     "storageAccountPrefix": {
-      "value": "gpdb-test"
+      "value": "plsdatalakegpdbeast"
+    },
+    "storageAccountType": {
+      "value": "Premium_LRS"
+    },
+    "sshPrivKeyData": {
+      "value": "-----BEGIN RSA PRIVATE KEY-----\n\n-----END RSA PRIVATE KEY-----"
+    },
+    "sshKeyData": {
+      "value": "ssh-rsa "
+    },
+    "apiToken": {
+      "value": ""
     },
     "adminPassword": {
-      "value": "GEN-PASSWORD"
+      "value": ""
     },
     "gpccPassword": {
       "value": "GEN-PASSWORD"
     },
     "numberOfSegmentNodes": {
-      "value": 3
+      "value": 4
     },
     "dnsNamePrefix": {
-      "value": "GEN-UNIQUE-10"
+      "value": "east"
+    },
+    "virtualNetworkName": {
+      "value": "vgpdbprodvneteast"
     },
     "location": {
       "value": "eastus"
     },
-    "storageAccountType": {
-      "value": "Premium_LRS"
-    },
-    "virtualNetworkName": {
-      "value": "gpdb-test"
-    },
     "subnetName": {
-      "value": "gpdb-test"
+      "value": "vgpdbprodeast"
+    },
+    "addressPrefix": {
+      "value": "10.4.0.0/16" 
+    },
+    "subnetPrefix": {
+      "value": "10.4.0.0/16" 
+    },
+    "nodeAddressPrefix": {
+      "value": "10.4.0."
     },
     "artifactsBaseUrl": {
-      "value": "https://bitbucket.org/allscriptsanalytics/gpdbazuredeploy/src/HEAD"
+      "value": "https://raw.githubusercontent.com/kdunn926/azureDeploy/master"
+    },
+    "segmentNodeDisk" : {
+      "value": "500"
     }
   }
 }
