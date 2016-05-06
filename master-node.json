@@ -205,6 +205,192 @@
     },
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic2')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "masterNodeNicLoop",
+        "count": "[parameters('vmCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-publicIP')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "10.4.0.102",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+              } 
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic3')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "masterNodeNicLoop",
+        "count": "[parameters('vmCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-publicIP')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "10.4.0.103",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+              } 
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic4')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "masterNodeNicLoop",
+        "count": "[parameters('vmCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-publicIP')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "10.4.0.104",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+              } 
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic5')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "masterNodeNicLoop",
+        "count": "[parameters('vmCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-publicIP')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "10.4.0.105",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+              } 
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic6')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "masterNodeNicLoop",
+        "count": "[parameters('vmCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-publicIP')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "10.4.0.106",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+              } 
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic7')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "masterNodeNicLoop",
+        "count": "[parameters('vmCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-publicIP')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "10.4.0.107",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+              } 
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'))]",
       "location": "[parameters('location')]",
@@ -215,7 +401,13 @@
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix)]",
         "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic0')]",
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic1')]" 
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic1')]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic2')]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic3')]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic4')]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic5')]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic6')]", 
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic7')]" 
       ],
       "properties": {
         "hardwareProfile": {
