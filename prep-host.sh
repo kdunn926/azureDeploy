@@ -73,7 +73,7 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     chown gpadmin:gpadmin /home/gpadmin/hostfile
 
     # Update system host file with segment hosts
-    python -c "print '\n'.join(['${IP_PREFIX}{0} {1}'.format(ip, 'sdw{0}'.format(n+1)) for n, ip in enumerate(range(${SEGMENT_IP_BASE}, ${SEGMENT_IP_BASE} + ${SEGMENTS}))])" >> /etc/hosts
+    python -c "print '\n'.join(['10.4.1.{0} {1}'.format(ip, 'sdw{0}'.format(n+1)) for n, ip in enumerate(range(${SEGMENT_IP_BASE}, ${SEGMENT_IP_BASE} + ${SEGMENTS}))])" >> /etc/hosts
 
     # Wait for all segment hosts before keyscan
     sleep 60
@@ -97,14 +97,14 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
 
     # Set up network bonding for LACP
     cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
-DHCP_HOSTNAME=${HOSTNAME}
+IPADDR=10.4.1.10
+PREFIX=24
 DEVICE=bond0
 NAME=bond0
 TYPE=Bond
 BONDING_MASTER=yes
-PREFIX=24
 ONBOOT=yes
-BOOTPROTO=dhcp
+BOOTPROTO=none
 TYPE=Ethernet
 USERCTL=no
 PEERDNS=yes
@@ -185,14 +185,14 @@ else
 
     # Set up network bonding for LACP
     cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
-DHCP_HOSTNAME=${HOSTNAME}
+IPADDR=10.4.1.${BOND_IP}
+PREFIX=24
 DEVICE=bond0
 NAME=bond0
 TYPE=Bond
 BONDING_MASTER=yes
-PREFIX=24
 ONBOOT=yes
-BOOTPROTO=DHCP
+BOOTPROTO=none
 BONDING_OPTS="mode=6 miimon=100"
 EOF
 
@@ -247,7 +247,7 @@ done
 # Load the bonding driver
 modprobe --first-time bonding
 
-for i in {0..7} ; do 
+for i in {1..7} ; do 
     # Enable Slave NICs for Bonding
     cat > /etc/sysconfig/network-scripts/ifcfg-eth${i} <<EOF
 TYPE="Ethernet"
