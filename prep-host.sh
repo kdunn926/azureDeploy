@@ -93,6 +93,21 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     # Create and mount master's data dir
     mkdir /data
     mount /data
+
+
+    # Set up network bonding for LACP
+    cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
+DEVICE=bond0
+NAME=bond0
+TYPE=Bond
+BONDING_MASTER=yes
+IPADDR=10.4.0.110
+PREFIX=24
+ONBOOT=yes
+BOOTPROTO=none
+BONDING_OPTS="mode=6 miimon=100"
+EOF
+
 else
     # Run the prep-segment.sh
 
@@ -162,6 +177,21 @@ else
 
     mount -a
 
+    BOND_IP=$(sed -e 's/sdw//g' ${HOSTNAME})
+
+    # Set up network bonding for LACP
+    cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
+DEVICE=bond0
+NAME=bond0
+TYPE=Bond
+BONDING_MASTER=yes
+IPADDR=10.4.0.12${BOND_IP}
+PREFIX=24
+ONBOOT=yes
+BOOTPROTO=none
+BONDING_OPTS="mode=6 miimon=100"
+EOF
+
 fi
 
 # Fix datadir ownership
@@ -208,5 +238,25 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 for BLOCKDEV in /sys/block/*/queue/scheduler; do
   echo deadline > "$BLOCKDEV"
 done
+
+
+for i in {1..7} ; do 
+    # Enable Slave NICs for Bonding
+    cat > /etc/sysconfig/network-scripts/ifcfg-eth${i} <<EOF
+TYPE="Ethernet"
+BOOTPROTO="none"
+DEFROUTE="yes"
+PEERDNS="yes"
+PEERROUTES="yes"
+IPV4_FAILURE_FATAL="no"
+IPV6INIT="no"
+ONBOOT="yes"
+MASTER=bond0
+SLAVE=yes
+EOF
+done ;
+
+# Load the bonding driver
+modprobe --first-time bonding
 
 echo "Done"
