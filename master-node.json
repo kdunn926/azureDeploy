@@ -157,7 +157,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, add(copyIndex(parameters('networkSpec').masterNodeAddressStart), mul(copyIndex(), 8)))]",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').masterNodeAddressStart))]",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               },
@@ -191,7 +191,6 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, add(copyIndex(add(parameters('networkSpec').masterNodeAddressStart), 1), mul(copyIndex(), 8)))]",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -222,7 +221,6 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, add(copyIndex(add(parameters('networkSpec').masterNodeAddressStart), 2), mul(copyIndex(), 8)))]",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -253,7 +251,6 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, add(copyIndex(add(parameters('networkSpec').masterNodeAddressStart), 3), mul(copyIndex(), 8)))]",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -284,7 +281,6 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, add(copyIndex(add(parameters('networkSpec').masterNodeAddressStart), 4), mul(copyIndex(), 8)))]",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -315,7 +311,6 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, add(copyIndex(add(parameters('networkSpec').masterNodeAddressStart), 5), mul(copyIndex(), 8)))]",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -346,7 +341,6 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, add(copyIndex(add(parameters('networkSpec').masterNodeAddressStart), 6), mul(copyIndex(), 8)))]",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -377,7 +371,6 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix, add(copyIndex(add(parameters('networkSpec').masterNodeAddressStart), 7), mul(copyIndex(), 8)))]",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
