@@ -459,7 +459,14 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic0'))]",
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic1'))]",
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic2'))]",
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic3'))]",
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic4'))]",
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic5'))]",
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic6'))]",
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('clusterSpec').clusterName, '-', parameters('role')[copyIndex()], variables('vmName'), '-nic7'))]"
             }
           ]
         }
