@@ -73,7 +73,7 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     chown gpadmin:gpadmin /home/gpadmin/hostfile
 
     # Update system host file with segment hosts
-    python -c "print '\n'.join(['${IP_PREFIX}{0} {1}'.format(ip, 'sdw{0}'.format(n+1)) for n, ip in enumerate(range(${SEGMENT_IP_BASE}, ${SEGMENT_IP_BASE} + ${SEGMENTS}))])" >> /etc/hosts
+    python -c "print '\n'.join(['${IP_PREFIX}1{0}0 {1}'.format(ip+2, 'sdw{0}'.format(n+1)) for n, ip in enumerate(range(${SEGMENT_IP_BASE}, ${SEGMENT_IP_BASE} + ${SEGMENTS}))])" >> /etc/hosts
 
     # Wait for all segment hosts before keyscan
     sleep 60
@@ -177,7 +177,7 @@ else
 
     mount -a
 
-    BOND_IP=$(sed -e 's/sdw//g' ${HOSTNAME})
+    BOND_IP=$(echo ${HOSTNAME} | sed -e 's/sdw//g')
 
     # Set up network bonding for LACP
     cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
@@ -240,6 +240,9 @@ for BLOCKDEV in /sys/block/*/queue/scheduler; do
 done
 
 
+# Load the bonding driver
+modprobe --first-time bonding
+
 for i in {1..7} ; do 
     # Enable Slave NICs for Bonding
     cat > /etc/sysconfig/network-scripts/ifcfg-eth${i} <<EOF
@@ -254,9 +257,8 @@ ONBOOT="yes"
 MASTER=bond0
 SLAVE=yes
 EOF
-done ;
 
-# Load the bonding driver
-modprobe --first-time bonding
+    ifconfig eth${i} up
+done ;
 
 echo "Done"
