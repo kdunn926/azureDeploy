@@ -73,7 +73,7 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     chown gpadmin:gpadmin /home/gpadmin/hostfile
 
     # Update system host file with segment hosts
-    python -c "print '\n'.join(['${IP_PREFIX}1{0}0 {1}'.format(ip+2, 'sdw{0}'.format(n+1)) for n, ip in enumerate(range(${SEGMENT_IP_BASE}, ${SEGMENT_IP_BASE} + ${SEGMENTS}))])" >> /etc/hosts
+    python -c "print '\n'.join(['${IP_PREFIX}1{0}0 {1}'.format(n+2, 'sdw{0}'.format(n+1)) for n, ip in enumerate(range(${SEGMENT_IP_BASE}, ${SEGMENT_IP_BASE} + ${SEGMENTS}))])" >> /etc/hosts
 
     # Wait for all segment hosts before keyscan
     sleep 60
@@ -177,7 +177,7 @@ else
 
     mount -a
 
-    BOND_IP=$(echo ${HOSTNAME} | sed -e 's/sdw//g')
+    BOND_IP=$(echo ${HOSTNAME} | sed -e 's/[^0-9]//g')
 
     # Set up network bonding for LACP
     cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
