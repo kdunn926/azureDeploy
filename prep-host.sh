@@ -109,7 +109,7 @@ TYPE=Ethernet
 USERCTL=no
 PEERDNS=yes
 IPV6INIT=no
-BONDING_OPTS="mode=6 miimon=100"
+BONDING_OPTS="mode=4 miimon=100"
 EOF
 
 else
