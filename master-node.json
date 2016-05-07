@@ -190,7 +190,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "10.4.0.101",
+              "privateIPAddress": "10.4.1.101",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -220,7 +220,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "10.4.0.102",
+              "privateIPAddress": "10.4.1.102",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -250,7 +250,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "10.4.0.103",
+              "privateIPAddress": "10.4.1.103",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -280,7 +280,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "10.4.0.104",
+              "privateIPAddress": "10.4.1.104",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -310,7 +310,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "10.4.0.105",
+              "privateIPAddress": "10.4.1.105",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -340,7 +340,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "10.4.0.106",
+              "privateIPAddress": "10.4.1.106",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 
@@ -370,7 +370,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "10.4.0.107",
+              "privateIPAddress": "10.4.1.107",
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
               } 

@@ -73,7 +73,7 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     chown gpadmin:gpadmin /home/gpadmin/hostfile
 
     # Update system host file with segment hosts
-    python -c "print '\n'.join(['10.4.1.{0} {1}'.format(ip, 'sdw{0}'.format(n+1)) for n, ip in enumerate(range(${SEGMENT_IP_BASE}, ${SEGMENT_IP_BASE} + ${SEGMENTS}))])" >> /etc/hosts
+    python -c "print '\n'.join(['10.4.1.{0} {1}'.format(101+(10*(n+2)), 'sdw{0}'.format(n+1)) for n, ip in enumerate(range(${SEGMENT_IP_BASE}, ${SEGMENT_IP_BASE} + ${SEGMENTS}))])" >> /etc/hosts
 
     # Wait for all segment hosts before keyscan
     sleep 60
