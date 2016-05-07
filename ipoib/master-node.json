@@ -262,7 +262,7 @@
         "typeHandlerVersion": "1.4",
         "settings": {
             "fileUris": [
-                "[concat(parameters('scriptsUri'), '/prep-host.sh')]"
+                "[concat(parameters('scriptsUri'), '/ipoib/prep-host.sh')]"
             ],
             "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').masterNodeAddressStart), ' ', parameters('role')[copyIndex()], variables('vmName'), ' ', parameters('clusterSpec').segmentNodes, ' ', parameters('vmSpec').apiToken, ' \"', parameters('vmSpec').sshPrivKeyData, '\" ', parameters('networkSpec').privateIPPrefix, ' ', parameters('networkSpec').segmentNodeAddressStart )]"
         }

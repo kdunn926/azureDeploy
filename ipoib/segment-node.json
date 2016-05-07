@@ -326,7 +326,7 @@
         "typeHandlerVersion": "1.4",
         "settings": {
             "fileUris": [
-                "[concat(parameters('scriptsUri'), '/prep-host.sh')]"
+                "[concat(parameters('scriptsUri'), '/ipoib/prep-host.sh')]"
             ],
             "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').segmentNodeAddressStart),' ', variables('vmName'), copyIndex(1))]"
         }
