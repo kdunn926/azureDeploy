@@ -185,7 +185,7 @@ else
 
     # Set up network bonding for LACP
     cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
-IPADDR=10.4.1.${BOND_IP}
+IPADDR=10.4.1.1$(expr ${BOND_IP} + 1)1
 PREFIX=24
 DEVICE=bond0
 NAME=bond0
@@ -193,7 +193,7 @@ TYPE=Bond
 BONDING_MASTER=yes
 ONBOOT=yes
 BOOTPROTO=none
-BONDING_OPTS="mode=6 miimon=100"
+BONDING_OPTS="mode=4 miimon=100"
 EOF
 
 fi
@@ -250,6 +250,7 @@ modprobe --first-time bonding
 for i in {1..7} ; do 
     # Enable Slave NICs for Bonding
     cat > /etc/sysconfig/network-scripts/ifcfg-eth${i} <<EOF
+DEVICE="eth${i}"
 TYPE="Ethernet"
 BOOTPROTO="none"
 DEFROUTE="yes"
@@ -258,8 +259,8 @@ PEERROUTES="yes"
 IPV4_FAILURE_FATAL="no"
 IPV6INIT="no"
 ONBOOT="yes"
-MASTER=bond0
-SLAVE=yes
+MASTER="bond0"
+SLAVE="yes"
 EOF
 
     ifconfig eth${i} up
