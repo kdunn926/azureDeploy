@@ -303,48 +303,6 @@
                 "primary": true
               },
               "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic0'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic1'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic2'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic3'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic4'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic5'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic6'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic7'))]"
             } 
           ]
         }
