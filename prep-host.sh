@@ -78,8 +78,6 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     # Wait for all segment hosts before keyscan
     sleep 60
     
-    # Add cluster hosts to system-wide known_hosts
-    for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do ssh-keyscan ${h} | tee --append /etc/ssh/ssh_known_hosts ; done ;
 
     # Partition the data disk
     echo -e "n\np\n1\n\n\nw\n" | fdisk /dev/sdc
@@ -97,7 +95,7 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
 
     # Set up network bonding for LACP
     cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
-IPADDR=10.4.1.10
+IPADDR=10.4.1.101
 PREFIX=24
 DEVICE=bond0
 NAME=bond0
@@ -268,5 +266,14 @@ done ;
 
 # Apply the changes
 service network restart
+
+# Force routing table to be correct
+route add -net 10.4.1.0/24 bond0
+
+# Add cluster hosts to system-wide known_hosts
+for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do ssh-keyscan ${h} | tee --append /etc/ssh/ssh_known_hosts ; done ;
+
+# Push host file
+for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do scp /etc/hosts ${h}:/etc/ ; done ;
 
 echo "Done"
