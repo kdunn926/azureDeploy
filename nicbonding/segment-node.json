@@ -124,7 +124,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[0], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
               "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '0/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '0/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '0')]"
               },
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('vmName'), copyIndex(1), '-publicIP'))]"
@@ -157,7 +157,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[1], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
               "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '1/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '1/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '1')]"
               } 
             }
           }
@@ -184,7 +184,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[2], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
               "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '2/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '2/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '2')]"
               } 
             }
           }
@@ -211,7 +211,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[3], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
               "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '3/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '3/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '3')]"
               } 
             }
           }
@@ -238,7 +238,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[4], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
               "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '4/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '4/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '4')]"
               } 
             }
           }
@@ -265,7 +265,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[5], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
               "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '5/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '5/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '5')]"
               } 
             }
           }
@@ -292,7 +292,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[6], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
               "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '6/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '6/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '6')]"
               } 
             }
           }
@@ -319,7 +319,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[7], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
               "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '7/subnets/', parameters('networkSpec').virtualNetworkSubnetName)]"
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '7/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '7')]"
               } 
             }
           }
