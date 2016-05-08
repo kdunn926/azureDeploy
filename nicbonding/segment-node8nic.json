@@ -553,42 +553,6 @@
                 "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk19.vhd')]"
               },
               "createOption": "Empty"
-            },
-            {
-              "name": "datadisk20",
-              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
-              "lun": 20,
-              "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk20.vhd')]"
-              },
-              "createOption": "Empty"
-            },
-            {
-              "name": "datadisk21",
-              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
-              "lun": 21,
-              "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk21.vhd')]"
-              },
-              "createOption": "Empty"
-            },
-            {
-              "name": "datadisk22",
-              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
-              "lun": 22,
-              "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk22.vhd')]"
-              },
-              "createOption": "Empty"
-            },
-            {
-              "name": "datadisk23",
-              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
-              "lun": 23,
-              "vhd": {
-                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk23.vhd')]"
-              },
-              "createOption": "Empty"
             } 
           ],
           "osDisk": {
