@@ -566,7 +566,7 @@
             "fileUris": [
                 "[concat(parameters('scriptsUri'), '/nicbonding/prep-host.sh')]"
             ],
-            "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix, copyIndex(parameters('networkSpec').segmentNodeAddressStart),' ', variables('vmName'), copyIndex(1))]"
+            "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix[0], copyIndex(parameters('networkSpec').segmentNodeAddressStart),' ', variables('vmName'), copyIndex(1))]"
         }
       }
     }
