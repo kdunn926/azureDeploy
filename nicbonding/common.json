@@ -86,11 +86,7 @@
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Network/virtualNetworks",
-      "name": "[concat(parameters('networkSpec').virtualNetworkName, copyIndex())]",
-      "copy": {
-        "name": "vnetLoop",
-        "count": 8
-      },
+      "name": "[parameters('networkSpec').virtualNetworkName]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSpec').virtualNetworkName, '-sg')]"
       ],
@@ -98,19 +94,82 @@
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "[parameters('networkSpec').addressPrefix[copyIndex()]]"
+            "[parameters('networkSpec').addressPrefix]"
           ]
         },
         "subnets": [
           {
-            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, copyIndex())]",
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '0')]",
             "properties": {
-              "addressPrefix": "[parameters('networkSpec').subnetPrefix[copyIndex()]]",
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[0]]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
               }
             }
-          }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '1')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[1]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '2')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[2]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '3')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[3]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '4')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[4]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '5')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[5]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '6')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[6]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '7')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[7]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          } 
         ]
       }
     }
