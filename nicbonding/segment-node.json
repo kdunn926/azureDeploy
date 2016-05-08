@@ -220,114 +220,6 @@
     },
     {
       "apiVersion": "[parameters('resourceAPIVersion')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('vmName'), copyIndex(1), '-nic4')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
-      ],
-      "copy": {
-        "name": "segmentNodeNicLoop",
-        "count": "[parameters('clusterSpec').segmentNodes]"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[4], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
-              "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '4')]"
-              } 
-            }
-          }
-        ] 
-      }
-    },
-    {
-      "apiVersion": "[parameters('resourceAPIVersion')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('vmName'), copyIndex(1), '-nic5')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
-      ],
-      "copy": {
-        "name": "segmentNodeNicLoop",
-        "count": "[parameters('clusterSpec').segmentNodes]"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[5], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
-              "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '5')]"
-              } 
-            }
-          }
-        ] 
-      }
-    },
-    {
-      "apiVersion": "[parameters('resourceAPIVersion')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('vmName'), copyIndex(1), '-nic6')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
-      ],
-      "copy": {
-        "name": "segmentNodeNicLoop",
-        "count": "[parameters('clusterSpec').segmentNodes]"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[6], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
-              "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '6')]"
-              } 
-            }
-          }
-        ] 
-      }
-    },
-    {
-      "apiVersion": "[parameters('resourceAPIVersion')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('vmName'), copyIndex(1), '-nic7')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
-      ],
-      "copy": {
-        "name": "segmentNodeNicLoop",
-        "count": "[parameters('clusterSpec').segmentNodes]"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[7], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
-              "subnet": {
-                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '7')]"
-              } 
-            }
-          }
-        ] 
-      }
-    },
-    {
-      "apiVersion": "[parameters('resourceAPIVersion')]",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(variables('vmName'), copyIndex(1))]",
       "location": "[parameters('location')]",
@@ -340,11 +232,7 @@
         "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic0')]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic1')]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic2')]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic3')]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic4')]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic5')]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic6')]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic7')]" 
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic3')]" 
       ],
       "properties": {
         "hardwareProfile": {
@@ -517,30 +405,6 @@
                 "primary": false
               },
               "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic3'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic4'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic5'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic6'))]"
-            },
-            {
-              "properties": {
-                "primary": false
-              },
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic7'))]"
             } 
           ]
         }
