@@ -133,6 +133,42 @@
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
               }
             }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '4')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[4]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '5')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[5]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '6')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[6]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
+          },
+          {
+            "name": "[concat(parameters('networkSpec').virtualNetworkSubnetName, '7')]",
+            "properties": {
+              "addressPrefix": "[parameters('networkSpec').subnetPrefix[7]]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('networkSpec').virtualNetworkName, '-sg'))]"
+              }
+            }
           } 
         ]
       }
