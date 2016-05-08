@@ -254,7 +254,7 @@ done
 # Load the bonding driver
 modprobe --first-time bonding
 
-for i in {1..4} ; do 
+for i in {1..7} ; do 
     # Enable Slave NICs for Bonding
     cat > /etc/sysconfig/network-scripts/ifcfg-eth${i} <<EOF
 DEVICE="eth${i}"

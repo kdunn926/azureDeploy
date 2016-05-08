@@ -1,0 +1,718 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.1",
+  "parameters": {
+    "resourceAPIVersion":{
+      "type":"string"
+    },
+    "dnsNamePrefix": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "scriptsUri": {
+      "type": "string"
+    },
+    "storageAccount": {
+      "type": "object"
+    },
+    "vmCount": {
+      "type": "int"
+    },
+    "vmSpec": {
+      "type": "secureobject"
+    },
+    "networkSpec": {
+      "type": "object"
+    },
+    "clusterSpec": {
+      "type": "object"
+    }
+  },
+  "variables": {
+    "vmName": "[concat(parameters('clusterSpec').clusterName, '-sdw')]",
+    "sshKeyPath": "[concat('/home/',parameters('vmSpec').adminUsername,'/.ssh/authorized_keys')]",
+    "publicIPAddressType": "Dynamic",
+    "securityGroupName": "[concat(parameters('networkSpec').virtualNetworkName, '-seg-sg')]",
+    "storageAccount": "[parameters('storageAccount')]",
+    "storageContainer": "[parameters('clusterSpec').clusterName]",
+    "diskVhdBaseName": "[concat('http://',variables('storageAccount').prefix,'.blob.core.windows.net/',variables('storageContainer'),'/',variables('vmName'),'-')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('securityGroupName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "SSH",
+            "properties": {
+              "description": "Allows SSH traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "NTP",
+            "properties": {
+              "description": "Allows NTP traffic",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "123",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 107,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccount').prefix]",
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "accountType": "[variables('storageAccount').type]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-publicIP')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "segmentNodeIpLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+        "dnsSettings": {
+          "domainNameLabel": "[concat(parameters('dnsNamePrefix'), '-', variables('vmName'), copyIndex(1))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-nic0')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('vmName'), copyIndex(1), '-publicIP')]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "copy": {
+        "name": "segmentNodeNicLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[0], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '0')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('vmName'), copyIndex(1), '-publicIP'))]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('securityGroupName'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-nic1')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "copy": {
+        "name": "segmentNodeNicLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[1], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '1')]"
+              } 
+            }
+          }
+        ] 
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-nic2')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "copy": {
+        "name": "segmentNodeNicLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[2], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '2')]"
+              } 
+            }
+          }
+        ] 
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-nic3')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "copy": {
+        "name": "segmentNodeNicLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[3], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '3')]"
+              } 
+            }
+          }
+        ] 
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-nic4')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "copy": {
+        "name": "segmentNodeNicLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[4], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '4')]"
+              } 
+            }
+          }
+        ] 
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-nic5')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "copy": {
+        "name": "segmentNodeNicLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[5], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '5')]"
+              } 
+            }
+          }
+        ] 
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-nic6')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "copy": {
+        "name": "segmentNodeNicLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[6], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '6')]"
+              } 
+            }
+          }
+        ] 
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmName'), copyIndex(1), '-nic7')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('securityGroupName'))]"
+      ],
+      "copy": {
+        "name": "segmentNodeNicLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('networkSpec').privateIPPrefix[7], copyIndex(parameters('networkSpec').segmentNodeAddressStart))]",
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('networkSpec').virtualNetworkName), '/subnets/', parameters('networkSpec').virtualNetworkSubnetName, '7')]"
+              } 
+            }
+          }
+        ] 
+      }
+    },
+    {
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('vmName'), copyIndex(1))]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "segmentNodeLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').prefix)]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic0')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic1')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic2')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic3')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic4')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic5')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic6')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('vmName'), copyIndex(1), '-nic7')]" 
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSpec').vmSize]"
+        },
+        "osProfile": {
+          "computername": "[concat(variables('vmName'), copyIndex(1))]",
+          "adminUsername": "[parameters('vmSpec').adminUsername]",
+          "adminPassword": "[parameters('vmSpec').adminPassword]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "false",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('vmSpec').sshKeyData]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('vmSpec').imagePublisher]",
+            "offer": "[parameters('vmSpec').imageOffer]",
+            "sku": "[parameters('vmSpec').imageSKU]",
+            "version": "[parameters('vmSpec').imageVersion]"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk0",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 0,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk0.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 1,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk1.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk2",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 2,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk2.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk3",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 3,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk3.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk4",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 4,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk4.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk5",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 5,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk5.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk6",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 6,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk6.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk7",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 7,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk7.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk8",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 8,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk8.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk9",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 9,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk9.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk10",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 10,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk10.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk11",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 11,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk11.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk12",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 12,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk12.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk13",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 13,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk13.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk14",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 14,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk14.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk15",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 15,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk15.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk16",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 16,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk16.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk17",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 17,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk17.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk18",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 18,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk18.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk19",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 19,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk19.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk20",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 20,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk20.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk21",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 21,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk21.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk22",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 22,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk22.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk23",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 23,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk23.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk24",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 24,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk24.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk25",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 25,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk25.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk26",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 26,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk26.vhd')]"
+              },
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk27",
+              "diskSizeGB": "[parameters('vmSpec').segmentNodeDataDiskGB]",
+              "lun": 27,
+              "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'datadisk27.vhd')]"
+              },
+              "createOption": "Empty"
+            }
+          ],
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+                "Uri": "[concat(variables('diskVhdBaseName'), copyIndex(1), 'osdisk.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "properties": {
+                "primary": true
+              },
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic0'))]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic1'))]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic2'))]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic3'))]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic4'))]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic5'))]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic6'))]"
+            },
+            {
+              "properties": {
+                "primary": false
+              },
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmName'), copyIndex(1), '-nic7'))]"
+            } 
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmName'), copyIndex(1), '/gpdbsegmentprep')]",
+      "apiVersion": "[parameters('resourceAPIVersion')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "segmentNodePrepLoop",
+        "count": "[parameters('clusterSpec').segmentNodes]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), copyIndex(1))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "settings": {
+            "fileUris": [
+                "[concat(parameters('scriptsUri'), '/nicbonding/prep-host8nic.sh')]"
+            ],
+            "commandToExecute": "[concat('bash prep-host.sh ', parameters('networkSpec').privateIPPrefix[1], copyIndex(parameters('networkSpec').segmentNodeAddressStart),' ', variables('vmName'), copyIndex(1))]"
+        }
+      }
+    }
+  ]
+}
