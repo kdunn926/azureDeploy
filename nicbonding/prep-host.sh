@@ -280,7 +280,7 @@ service network restart
 route add -net ${IP_PREFIX}0/24 bond0
 
 # Disable strict host checking for cluster hosts
-for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do echo -e "\n${h}\n  StrictHostChecking no\n" | tee --append /etc/ssh/ssh_config ; done ;
+for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do echo -e "\nHost ${h}\n  StrictHostKeyChecking no" | tee --append /etc/ssh/ssh_config ; done ;
 
 # Push host file
 for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do scp /etc/hosts ${h}:/etc/ ; done ;
