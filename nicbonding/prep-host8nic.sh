@@ -285,4 +285,12 @@ for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do echo -e "\nHost ${h}\n  Str
 # Push host file
 for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do scp /etc/hosts ${h}:/etc/ ; done ;
 
+# Install Hyper-V Linux Integration Services
+yum install microsoft-hyper-v -y
+
+# Install iperf3 for benchmarking
+yum install iperf3 -y
+
+# Need to do a reboot after provisioning to ensure HyperV drivers are being used
+
 echo "Done"
