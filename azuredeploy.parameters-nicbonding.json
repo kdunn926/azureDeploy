@@ -1,0 +1,60 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.1",
+  "parameters": {
+    "clusterName": {
+      "value": "gpdb"
+    },
+    "masterVmSize": {
+      "value": "Standard_A11"
+    },
+    "segmentVmSize": {
+      "value": "Standard_A11"
+    },
+    "centosRelease": {
+      "value": "6.7"
+    },
+    "storageAccountPrefix": {
+      "value": "plsgpdbsc2"
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "sshPrivKeyData": {
+      "value": "-----BEGIN RSA PRIVATE KEY-----\n << YOUR PRIVATE KEY HERE >> \n-----END RSA PRIVATE KEY-----"
+    },
+    "sshKeyData": {
+      "value": "<< YOUR PUBLIC KEY HERE >>"
+    },
+    "apiToken": {
+      "value": "<< PIVOTAL NETWORK API TOKEN HERE >>"
+    },
+    "adminPassword": {
+      "value": "<< GPADMIN PASSWORD HERE >>"
+    },
+    "gpccPassword": {
+      "value": "GEN-PASSWORD"
+    },
+    "numberOfSegmentNodes": {
+      "value": 4
+    },
+    "dnsNamePrefix": {
+      "value": "sc"
+    },
+    "virtualNetworkName": {
+      "value": "gpdbvnetsc2"
+    },
+    "location": {
+      "value": "southcentralus"
+    },
+    "subnetName": {
+      "value": "gpdbsc2"
+    },
+    "artifactsBaseUrl": {
+      "value": "https://raw.githubusercontent.com/kdunn926/azureDeploy/master"
+    },
+    "segmentNodeDisk" : {
+      "value": "500"
+    }
+  }
+}
