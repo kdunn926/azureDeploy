@@ -236,6 +236,17 @@ net.core.rmem_max = 2097152
 net.core.wmem_max = 2097152
 vm.overcommit_memory = 2
 vm.overcommit_ratio = 100
+
+# Azure Specific network adjustments
+net.core.wmem_max = 12582912
+net.core.rmem_max = 12582912
+net.ipv4.tcp_rmem = 10240 87380 12582912
+net.ipv4.tcp_window_scaling = 1
+net.ipv4.tcp_wmem = 10240 87380 12582912
+net.ipv4.tcp_timestamps = 1
+net.ipv4.tcp_sack = 1
+net.ipv4.tcp_no_metrics_save = 1
+net.core.netdev_max_backlog = 5000
 $SYSCTL_TAIL"
 
 KERNEL="elevator=deadline transparent_hugepage=never"
