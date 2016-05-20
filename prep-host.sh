@@ -38,6 +38,15 @@ chown root:root /root/.ssh/authorized_keys
 sed -ie "s|SELINUX=enforcing|SELINUX=disabled|" /etc/selinux/config
 setenforce 0
 
+# Set ulimits for gpadmin
+cat >> /etc/security/limits.d/99-gpdb.conf <<EOF
+## Greenplum Database Limits
+gpadmin soft nofile 65536
+gpadmin hard nofile 65536
+gpadmin soft nproc 131072
+gpadmin hard nproc 131072
+EOF
+
 # Install an configure fail2ban for the script kiddies
 yum install epel-release -y
 yum install fail2ban -y
@@ -63,6 +72,9 @@ yum install xfsprogs -y
 if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     # Stage the GPDB appliance tarball
     curl -o /home/gpadmin/greenplum-db-appliance-4.3.8.1-build-1-RHEL5-x86_64.bin  -d "" -H "Authorization: Token ${APITOKEN}" -L https://network.pivotal.io/api/v2/products/pivotal-gpdb/releases/1683/product_files/4369/download
+
+    # Stage the GPCC tarball
+    curl -o /home/gpadmin/greenplum-cc-web-2.1.0-build-36-RHEL5-x86_64.zip -d "" -H "Authorization: Token ${APITOKEN}" -L https://network.pivotal.io/api/v2/products/pivotal-gpdb/releases/1748/product_files/4517/download
 
     chown gpadmin:gpadmin /home/gpadmin/greenplum-db-appliance-*
     chmod u+x /home/gpadmin/greenplum-db-appliance-*
@@ -92,23 +104,20 @@ if [[ "${HOSTNAME}" == *"mdw"* ]] ; then
     mkdir /data
     mount /data
 
+    mkdir /data/master
 
-    # Set up network bonding for LACP
-    cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
-IPADDR=10.4.1.101
-PREFIX=24
-DEVICE=bond0
-NAME=bond0
-TYPE=Bond
-BONDING_MASTER=yes
-ONBOOT=yes
-BOOTPROTO=none
-TYPE=Ethernet
-USERCTL=no
-PEERDNS=yes
-IPV6INIT=no
-BONDING_OPTS="mode=4 miimon=100"
 EOF
+
+    # Get some Anaconda stuff on master
+    wget -O /tmp/Anaconda2-4.0.0-Linux-x86_64.sh http://repo.continuum.io/archive/Anaconda2-4.0.0-Linux-x86_64.sh
+
+    sh /tmp/Anaconda2-4.0.0-Linux-x86_64.sh -b -p /opt/anaconda
+
+    /opt/anaconda2/bin/conda install psycopg2
+    pip install ipython-sql
+    pip install azure
+
+    chmod ugo+w /opt/anaconda/{,pkgs,conda-meta,lib/python2.7/site-packages}
 
 else
     # Run the prep-segment.sh
@@ -179,25 +188,14 @@ else
 
     mount -a
 
-    BOND_IP=$(echo ${HOSTNAME} | sed -e 's/[^0-9]//g')
+    mkdir /data{1..$VOLUMES}/primary
 
-    # Set up network bonding for LACP
-    cat > /etc/sysconfig/network-scripts/ifcfg-bond0 <<EOF
-IPADDR=10.4.1.1$(expr ${BOND_IP} + 1)1
-PREFIX=24
-DEVICE=bond0
-NAME=bond0
-TYPE=Bond
-BONDING_MASTER=yes
-ONBOOT=yes
-BOOTPROTO=none
-BONDING_OPTS="mode=4 miimon=100"
 EOF
 
 fi
 
 # Fix datadir ownership
-chown -f gpadmin:gpadmin /data* 
+chown -Rf gpadmin:gpadmin /data* 
 
 # Set kernel parameters
 
@@ -227,9 +225,19 @@ net.core.rmem_max = 2097152
 net.core.wmem_max = 2097152
 vm.overcommit_memory = 2
 vm.overcommit_ratio = 100
+
+# Azure Networking Bits
+net.core.rmem_max = 134217728
+net.core.wmem_max = 134217728
+net.ipv4.tcp_rmem = 10000000 10000000 10000000
+net.ipv4.tcp_wmem = 10000000 10000000 10000000
+net.ipv4.tcp_mem = 10000000 10000000 10000000
+net.core.rmem_default = 134217728
+net.core.wmem_default = 134217728
+net.core.optmem_max = 134217728
 $SYSCTL_TAIL"
 
-KERNEL="elevator=deadline transparent_hugepage=never"
+KERNEL="elevator=none transparent_hugepage=never"
 
 sed -i -e "/$SYSCTL_HEAD/,/$SYSCTL_TAIL/d" /etc/sysctl.conf
 echo "$SYSCTL" >> /etc/sysctl.conf
@@ -238,42 +246,36 @@ echo "$SYSCTL" | /sbin/sysctl -p -
 sed -i -r "s/kernel(.+)/kernel\1 $KERNEL/" /boot/grub/grub.conf
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 for BLOCKDEV in /sys/block/*/queue/scheduler; do
-  echo deadline > "$BLOCKDEV"
+  echo none > "$BLOCKDEV"
 done
 
-
-# Load the bonding driver
-modprobe --first-time bonding
-
-for i in {1..7} ; do 
-    # Enable Slave NICs for Bonding
-    cat > /etc/sysconfig/network-scripts/ifcfg-eth${i} <<EOF
-DEVICE="eth${i}"
-TYPE="Ethernet"
-BOOTPROTO="none"
-DEFROUTE="yes"
-PEERDNS="yes"
-PEERROUTES="yes"
-IPV4_FAILURE_FATAL="no"
-IPV6INIT="no"
-ONBOOT="yes"
-MASTER="bond0"
-SLAVE="yes"
-EOF
-
-    ifconfig eth${i} up
-done ;
-
-# Apply the changes
-service network restart
-
-# Force routing table to be correct
-route add -net 10.4.1.0/24 bond0
-
-# Add cluster hosts to system-wide known_hosts
-for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do ssh-keyscan ${h} | tee --append /etc/ssh/ssh_known_hosts ; done ;
+# Disable strict host checking for cluster hosts
+for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do echo -e "\nHost ${h}\n  StrictHostKeyChecking no\n" | tee --append /etc/ssh/ssh_config ; done ;
 
 # Push host file
 for h in `grep sdw /etc/hosts | cut -f2 -d ' '` ; do scp /etc/hosts ${h}:/etc/ ; done ;
+
+# Install Hyper-V Linux Integration Services
+yum install microsoft-hyper-v -y
+
+# Install iperf3 for benchmarking
+yum install iperf3 -y
+
+# Install repo for later GCC
+yum install centos-release-scl -y
+
+# Install GCC 4.9
+yum install devtoolset-3-gcc -y
+
+# Download repofile for Boost154, cpprest, ORC for Wasb2Orc
+wget https://bintray.com/kdunn926/AzureLinux/rpm -O /etc/yum.repos.d/bintray-kdunn926-AzureLinux.repo
+yum install protobuf boost orc cpprestsdk azurestoragecpp -y
+
+easy_install pip
+
+pip install azure
+
+# Make scratch space available for everyone
+chmod 777 /mnt/resource/
 
 echo "Done"
