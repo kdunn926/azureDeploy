@@ -14,6 +14,7 @@ $ git clone git@github.com:kdunn926/azureDeploy.git
 ```
 
 ### Configure azuredeploy.parameters.json
+##### (Note: any parameter listed in the ```parameters``` section of ```azuredeploy.json``` can be added to this file to override the defaults.)
 - Public and private keypair data
 - gpadmin default password
 - Pivotal Network API key
@@ -25,7 +26,6 @@ $ git clone git@github.com:kdunn926/azureDeploy.git
 - Number of masters (1 or 2)
 - Number of segment servers
 - Segment disk size (default 500GB)
-(Note: any parameter listed in the ```parameters``` section of ```azuredeploy.json``` can be added to this file to override the defaults.)
 
 ### Create Resource Group
 
