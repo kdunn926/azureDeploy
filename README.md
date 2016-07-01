@@ -25,6 +25,7 @@ $ git clone git@github.com:kdunn926/azureDeploy.git
 - Number of masters (1 or 2)
 - Number of segment servers
 - Segment disk size (default 500GB)
+(Note: any parameter listed in the ```parameters``` section of ```azuredeploy.json``` can be added to this file to override the defaults.)
 
 ### Create Resource Group
 
@@ -35,18 +36,13 @@ $ azure group create gpdb-east -l eastus
 
 ### Deploy
 
-##### Example A11 cluster deployment
+##### Example cluster deployment
 ```
-$ azure group deployment create -f azuredeploy-nicbonding.json -e azuredeploy.parameters-nicbonding.json gpdb-east -n gpdb-prod
-```
-
-##### Example GS4 cluster deployment
-```
-$ azure group deployment create -f azuredeploy-8nicbonding.json -e azuredeploy.parameters-8nicbonding.json -g gpdb-east -n gpdb-prod
+$ azure group deployment create -f azuredeploy.json -e azuredeploy.parameters.json gpdb-east -n gpdb-prod
 ```
 
 ### Login
 ```
-$ ssh -i myKey gpadmin@east-gpdb-mdw.eastus.cloudapp.azure.com
+$ ssh -i /path/to/my/sshPrivateKeyFile gpadmin@east-gpdb-mdw.eastus.cloudapp.azure.com
 ```
 
